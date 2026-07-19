@@ -1559,9 +1559,9 @@ def acUpdate(deltaT):
 
         # Performance & Turbo & DRS update
         try:
-            turbo = simInfo.physics.turbo
-            drs_enabled = simInfo.graphics.drsEnabled
-            drs_avail = simInfo.graphics.drsAvailable
+            turbo = simInfo.physics.turboBoost
+            drs_enabled = simInfo.physics.drsEnabled
+            drs_avail = simInfo.physics.drsAvailable
             
             ac.setText(lblPerfTurbo, "Turbo: {0:.1f} bar".format(turbo))
             if drs_enabled:
