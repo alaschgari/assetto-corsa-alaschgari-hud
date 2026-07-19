@@ -52,6 +52,10 @@ try:
 except Exception as e:
     log_error("SimInfo import failed: " + traceback.format_exc())
 
+# App configuration
+appName = "AlaschgariHUD"
+width, height = 800, 140
+
 # Scale factor from configuration
 scale = 1.0
 
