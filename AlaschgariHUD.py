@@ -88,9 +88,9 @@ lblPedalThrottleVal = 0
 lblKersName = 0
 lblWearName = 0
 
-# Settings App
 lblSliderName = 0
 sliderScale = 0
+last_spinner_value = 100.0
 
 # Telemetry data cache
 gear = "G1"
@@ -407,7 +407,8 @@ def acMain(ac_version):
         ac.setRange(sliderScale, 50.0, 150.0)
         ac.setStep(sliderScale, 5.0)
         ac.setValue(sliderScale, scale * 100.0)
-        ac.addOnValueSpinnerChangedListener(sliderScale, onScaleSpinnerChange)
+        
+        last_spinner_value = scale * 100.0
 
         # Max RPM default check from shared memory
         if simInfo is not None:
@@ -619,6 +620,19 @@ def acUpdate(deltaT):
     global lblGear, lblSpeed, lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR, lblGForce
     global clutchInput, brakeInput, throttleInput, kersCharge, tyreWear, brakeTemps, gForceLat, gForceLon
     global lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
+    global last_spinner_value, sliderScale, lblSliderName
+
+    # 0. Check in-game Scale Spinner
+    try:
+        if sliderScale != 0:
+            current_val = ac.getValue(sliderScale)
+            if current_val != last_spinner_value:
+                last_spinner_value = current_val
+                updateScale(current_val / 100.0)
+                ac.setText(lblSliderName, "HUD Scale: {0:.0f}%".format(current_val))
+                saveConfig()
+    except Exception as e:
+        log_error("Spinner update failed:\n" + traceback.format_exc())
 
     # 1. Update Gear
     try:
