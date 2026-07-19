@@ -404,11 +404,11 @@ def acMain(ac_version):
         sliderScale = ac.addSpinner(appSettings, "Scale")
         ac.setPosition(sliderScale, 10, 35)
         ac.setSize(sliderScale, 230, 20)
-        ac.setRange(sliderScale, 50.0, 150.0)
-        ac.setStep(sliderScale, 5.0)
-        ac.setValue(sliderScale, scale * 100.0)
+        ac.setRange(sliderScale, 50, 150)
+        ac.setStep(sliderScale, 5)
+        ac.setValue(sliderScale, int(scale * 100))
         
-        last_spinner_value = scale * 100.0
+        last_spinner_value = int(scale * 100)
 
         # Max RPM default check from shared memory
         if simInfo is not None:
