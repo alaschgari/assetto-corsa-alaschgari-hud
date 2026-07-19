@@ -401,11 +401,13 @@ def acMain(ac_version):
         ac.setPosition(lblSliderName, 10, 10)
         ac.setFontSize(lblSliderName, 10)
 
-        sliderScale = ac.addSlider(appSettings, "Scale", 50, 150)
+        sliderScale = ac.addSpinner(appSettings, "Scale")
         ac.setPosition(sliderScale, 10, 35)
         ac.setSize(sliderScale, 230, 20)
-        ac.setValue(sliderScale, int(scale * 100))
-        ac.addOnValueChangedListener(sliderScale, onScaleSliderChange)
+        ac.setRange(sliderScale, 50.0, 150.0)
+        ac.setStep(sliderScale, 5.0)
+        ac.setValue(sliderScale, scale * 100.0)
+        ac.addOnValueSpinnerChangedListener(sliderScale, onScaleSpinnerChange)
 
         # Max RPM default check from shared memory
         if simInfo is not None:
@@ -419,9 +421,13 @@ def acMain(ac_version):
         return appName
 
 def getTireColor(temp):
-    if temp < 70.0:
+    try:
+        t = float(temp)
+    except:
+        t = 0.0
+    if t < 70.0:
         return [0.1, 0.4, 0.8, 0.9] # Cold blue
-    elif temp > 95.0:
+    elif t > 95.0:
         return [1.0, 0.2, 0.2, 0.9] # Hot red
     else:
         return [0.0, 1.0, 0.4, 0.9] # Optimal green
@@ -438,6 +444,7 @@ def drawShiftGL(deltaT):
     try:
         pct = float(rpms) / float(maxRpm)
         if pct > 1.0: pct = 1.0
+        if pct < 0.0: pct = 0.0
 
         total_segments = 24
         segment_gap = 2
@@ -509,7 +516,7 @@ def drawTiresGL(deltaT):
             ac.glQuad(int(80 * scale), int(39 * scale), int(20 * scale), int(4 * scale))
             col = getTireColor(tireTemps[0])
             ac.glColor4f(col[0], col[1], col[2], col[3])
-            pct = max(0.0, min(1.0, (tireTemps[0] - 40.0) / 80.0))
+            pct = max(0.0, min(1.0, (float(tireTemps[0]) - 40.0) / 80.0))
             ac.glQuad(int(80 * scale), int(39 * scale), int(20 * pct * scale), int(4 * scale))
 
             # FR Bar
@@ -517,7 +524,7 @@ def drawTiresGL(deltaT):
             ac.glQuad(int(168 * scale), int(39 * scale), int(20 * scale), int(4 * scale))
             col = getTireColor(tireTemps[1])
             ac.glColor4f(col[0], col[1], col[2], col[3])
-            pct = max(0.0, min(1.0, (tireTemps[1] - 40.0) / 80.0))
+            pct = max(0.0, min(1.0, (float(tireTemps[1]) - 40.0) / 80.0))
             ac.glQuad(int(168 * scale), int(39 * scale), int(20 * pct * scale), int(4 * scale))
 
             # RL Bar
@@ -525,7 +532,7 @@ def drawTiresGL(deltaT):
             ac.glQuad(int(80 * scale), int(89 * scale), int(20 * scale), int(4 * scale))
             col = getTireColor(tireTemps[2])
             ac.glColor4f(col[0], col[1], col[2], col[3])
-            pct = max(0.0, min(1.0, (tireTemps[2] - 40.0) / 80.0))
+            pct = max(0.0, min(1.0, (float(tireTemps[2]) - 40.0) / 80.0))
             ac.glQuad(int(80 * scale), int(89 * scale), int(20 * pct * scale), int(4 * scale))
 
             # RR Bar
@@ -533,14 +540,14 @@ def drawTiresGL(deltaT):
             ac.glQuad(int(168 * scale), int(89 * scale), int(20 * scale), int(4 * scale))
             col = getTireColor(tireTemps[3])
             ac.glColor4f(col[0], col[1], col[2], col[3])
-            pct = max(0.0, min(1.0, (tireTemps[3] - 40.0) / 80.0))
+            pct = max(0.0, min(1.0, (float(tireTemps[3]) - 40.0) / 80.0))
             ac.glQuad(int(168 * scale), int(89 * scale), int(20 * pct * scale), int(4 * scale))
 
         # Brake Indicator Bars
         ac.glColor4f(1.0, 0.2, 0.2, 0.8)
-        bf_pct = max(0.0, min(1.0, brakeTemps[0] / 800.0))
+        bf_pct = max(0.0, min(1.0, float(brakeTemps[0]) / 800.0))
         ac.glQuad(int(265 * scale), int(20 * scale), int(30 * bf_pct * scale), int(5 * scale))
-        br_pct = max(0.0, min(1.0, brakeTemps[2] / 800.0))
+        br_pct = max(0.0, min(1.0, float(brakeTemps[2]) / 800.0))
         ac.glQuad(int(265 * scale), int(70 * scale), int(30 * br_pct * scale), int(5 * scale))
     except Exception as e:
         log_error("drawTiresGL failed:\n" + traceback.format_exc())
