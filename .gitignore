@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.zip
+
+# AC runtime config
+config.ini
+error.log

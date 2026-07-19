@@ -191,6 +191,20 @@ sliderScaleDamage = 0
 sliderScaleTrack = 0
 sliderScaleDebug = 0
 
+# Plus buttons on each widget
+btnScaleShift = 0
+btnScaleTires = 0
+btnScaleSpeed = 0
+btnScaleGear = 0
+btnScalePedals = 0
+btnScaleKers = 0
+btnScaleTimes = 0
+btnScaleFuel = 0
+btnScalePerf = 0
+btnScaleDamage = 0
+btnScaleTrack = 0
+btnScaleDebug = 0
+
 # Telemetry data cache
 gear = "G1"
 speed = 0
@@ -355,14 +369,17 @@ def updateWindowsBackground():
     except Exception as e:
         log_error("updateWindowsBackground failed:\n" + traceback.format_exc())
 
-# Individual Widget Scaling Hooks (All fonts scaled to 24px default)
+# Individual Widget Scaling Hooks
 def updateScaleShift(s):
-    global scale_shift
+    global scale_shift, btnScaleShift
     scale_shift = s
     ac.setSize(appShift, int(round(480 * scale_shift)), int(round(20 * scale_shift)))
+    if btnScaleShift != 0:
+        ac.setPosition(btnScaleShift, int(round(462 * scale_shift)), 0)
+        ac.setSize(btnScaleShift, int(round(18 * scale_shift)), int(round(18 * scale_shift)))
 
 def updateScaleTires(s):
-    global scale_tires
+    global scale_tires, btnScaleTires
     global appTires, lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR, imgChassis
     scale_tires = s
     ac.setSize(appTires, int(round(310 * scale_tires)), int(round(125 * scale_tires)))
@@ -381,9 +398,12 @@ def updateScaleTires(s):
     if imgChassis != 0:
         ac.setPosition(imgChassis, int(round(110 * scale_tires)), int(round(10 * scale_tires)))
         ac.setSize(imgChassis, int(round(90 * scale_tires)), int(round(90 * scale_tires)))
+    if btnScaleTires != 0:
+        ac.setPosition(btnScaleTires, int(round(292 * scale_tires)), 0)
+        ac.setSize(btnScaleTires, int(round(18 * scale_tires)), int(round(18 * scale_tires)))
 
 def updateScaleSpeed(s):
-    global scale_speed
+    global scale_speed, btnScaleSpeed
     global appSpeed, lblSpeed, lblSpeedLabel
     scale_speed = s
     ac.setSize(appSpeed, int(round(140 * scale_speed)), int(round(125 * scale_speed)))
@@ -391,9 +411,12 @@ def updateScaleSpeed(s):
     ac.setFontSize(lblSpeed, int(round(24 * scale_speed)))
     ac.setPosition(lblSpeedLabel, int(round(70 * scale_speed)), int(round(105 * scale_speed)))
     ac.setFontSize(lblSpeedLabel, int(round(24 * scale_speed)))
+    if btnScaleSpeed != 0:
+        ac.setPosition(btnScaleSpeed, int(round(122 * scale_speed)), 0)
+        ac.setSize(btnScaleSpeed, int(round(18 * scale_speed)), int(round(18 * scale_speed)))
 
 def updateScaleGear(s):
-    global scale_gear
+    global scale_gear, btnScaleGear
     global appGear, lblGear, lblGForce, lblGearLabel
     scale_gear = s
     ac.setSize(appGear, int(round(140 * scale_gear)), int(round(125 * scale_gear)))
@@ -403,9 +426,12 @@ def updateScaleGear(s):
     ac.setFontSize(lblGForce, int(round(24 * scale_gear)))
     ac.setPosition(lblGearLabel, int(round(70 * scale_gear)), int(round(105 * scale_gear)))
     ac.setFontSize(lblGearLabel, int(round(24 * scale_gear)))
+    if btnScaleGear != 0:
+        ac.setPosition(btnScaleGear, int(round(122 * scale_gear)), 0)
+        ac.setSize(btnScaleGear, int(round(18 * scale_gear)), int(round(18 * scale_gear)))
 
 def updateScalePedals(s):
-    global scale_pedals
+    global scale_pedals, btnScalePedals
     global appPedals, imgPedalClutch, imgPedalBrake, imgPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
     scale_pedals = s
     ac.setSize(appPedals, int(round(162 * scale_pedals)), int(round(70 * scale_pedals)))
@@ -425,9 +451,12 @@ def updateScalePedals(s):
     ac.setFontSize(lblPedalBrakeVal, int(round(24 * scale_pedals)))
     ac.setPosition(lblPedalThrottleVal, int(round(154 * scale_pedals)), int(round(41 * scale_pedals)))
     ac.setFontSize(lblPedalThrottleVal, int(round(24 * scale_pedals)))
+    if btnScalePedals != 0:
+        ac.setPosition(btnScalePedals, int(round(144 * scale_pedals)), 0)
+        ac.setSize(btnScalePedals, int(round(18 * scale_pedals)), int(round(18 * scale_pedals)))
 
 def updateScaleKers(s):
-    global scale_kers
+    global scale_kers, btnScaleKers
     global appKers, imgKers, imgWear
     scale_kers = s
     ac.setSize(appKers, int(round(162 * scale_kers)), int(round(45 * scale_kers)))
@@ -437,9 +466,12 @@ def updateScaleKers(s):
     if imgWear != 0:
         ac.setPosition(imgWear, int(round(94 * scale_kers)), int(round(10 * scale_kers)))
         ac.setSize(imgWear, int(round(24 * scale_kers)), int(round(24 * scale_kers)))
+    if btnScaleKers != 0:
+        ac.setPosition(btnScaleKers, int(round(144 * scale_kers)), 0)
+        ac.setSize(btnScaleKers, int(round(18 * scale_kers)), int(round(18 * scale_kers)))
 
 def updateScaleTimes(s):
-    global scale_times
+    global scale_times, btnScaleTimes
     global appTimes, lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
     scale_times = s
     ac.setSize(appTimes, int(round(162 * scale_times)), int(round(70 * scale_times)))
@@ -451,9 +483,12 @@ def updateScaleTimes(s):
     ac.setFontSize(lblTimesLast, int(round(24 * scale_times)))
     ac.setPosition(lblTimesLaps, int(round(81 * scale_times)), int(round(50 * scale_times)))
     ac.setFontSize(lblTimesLaps, int(round(24 * scale_times)))
+    if btnScaleTimes != 0:
+        ac.setPosition(btnScaleTimes, int(round(144 * scale_times)), 0)
+        ac.setSize(btnScaleTimes, int(round(18 * scale_times)), int(round(18 * scale_times)))
 
 def updateScaleFuel(s):
-    global scale_fuel
+    global scale_fuel, btnScaleFuel
     global appFuel, lblFuelCurrent, lblFuelCons, lblFuelEst, lblFuelTemps
     scale_fuel = s
     ac.setSize(appFuel, int(round(162 * scale_fuel)), int(round(70 * scale_fuel)))
@@ -465,9 +500,12 @@ def updateScaleFuel(s):
     ac.setFontSize(lblFuelEst, int(round(24 * scale_fuel)))
     ac.setPosition(lblFuelTemps, int(round(81 * scale_fuel)), int(round(50 * scale_fuel)))
     ac.setFontSize(lblFuelTemps, int(round(24 * scale_fuel)))
+    if btnScaleFuel != 0:
+        ac.setPosition(btnScaleFuel, int(round(144 * scale_fuel)), 0)
+        ac.setSize(btnScaleFuel, int(round(18 * scale_fuel)), int(round(18 * scale_fuel)))
 
 def updateScalePerf(s):
-    global scale_perf
+    global scale_perf, btnScalePerf
     global appPerf, imgPerf, lblPerfDelta, lblPerfTurbo, lblPerfDRS
     scale_perf = s
     ac.setSize(appPerf, int(round(162 * scale_perf)), int(round(70 * scale_perf)))
@@ -480,9 +518,12 @@ def updateScalePerf(s):
     ac.setFontSize(lblPerfTurbo, int(round(24 * scale_perf)))
     ac.setPosition(lblPerfDRS, int(round(154 * scale_perf)), int(round(5 * scale_perf)))
     ac.setFontSize(lblPerfDRS, int(round(24 * scale_perf)))
+    if btnScalePerf != 0:
+        ac.setPosition(btnScalePerf, int(round(144 * scale_perf)), 0)
+        ac.setSize(btnScalePerf, int(round(18 * scale_perf)), int(round(18 * scale_perf)))
 
 def updateScaleDamage(s):
-    global scale_damage
+    global scale_damage, btnScaleDamage
     global appDamage, imgDamage, lblDamageEngine, lblDamageAero, lblDamageTrans
     scale_damage = s
     ac.setSize(appDamage, int(round(162 * scale_damage)), int(round(70 * scale_damage)))
@@ -495,9 +536,12 @@ def updateScaleDamage(s):
     ac.setFontSize(lblDamageAero, int(round(24 * scale_damage)))
     ac.setPosition(lblDamageTrans, int(round(154 * scale_damage)), int(round(5 * scale_damage)))
     ac.setFontSize(lblDamageTrans, int(round(24 * scale_damage)))
+    if btnScaleDamage != 0:
+        ac.setPosition(btnScaleDamage, int(round(144 * scale_damage)), 0)
+        ac.setSize(btnScaleDamage, int(round(18 * scale_damage)), int(round(18 * scale_damage)))
 
 def updateScaleTrack(s):
-    global scale_track
+    global scale_track, btnScaleTrack
     global appTrack, imgTrack, lblTrackGrip, lblTrackWind
     scale_track = s
     ac.setSize(appTrack, int(round(162 * scale_track)), int(round(70 * scale_track)))
@@ -508,14 +552,117 @@ def updateScaleTrack(s):
     ac.setFontSize(lblTrackGrip, int(round(24 * scale_track)))
     ac.setPosition(lblTrackWind, int(round(8 * scale_track)), int(round(5 * scale_track)))
     ac.setFontSize(lblTrackWind, int(round(24 * scale_track)))
+    if btnScaleTrack != 0:
+        ac.setPosition(btnScaleTrack, int(round(144 * scale_track)), 0)
+        ac.setSize(btnScaleTrack, int(round(18 * scale_track)), int(round(18 * scale_track)))
 
 def updateScaleDebug(s):
-    global scale_debug
+    global scale_debug, btnScaleDebug
     global appDebug, lblDebugError
     scale_debug = s
     ac.setSize(appDebug, int(round(310 * scale_debug)), int(round(40 * scale_debug)))
     ac.setPosition(lblDebugError, int(round(10 * scale_debug)), int(round(12 * scale_debug)))
     ac.setFontSize(lblDebugError, int(round(24 * scale_debug)))
+    if btnScaleDebug != 0:
+        ac.setPosition(btnScaleDebug, int(round(292 * scale_debug)), 0)
+        ac.setSize(btnScaleDebug, int(round(18 * scale_debug)), int(round(18 * scale_debug)))
+
+# Click callbacks for Plus buttons
+def onScaleShiftClick(x, y):
+    global scale_shift, sliderScaleShift
+    scale_shift = round(scale_shift + 0.1, 1)
+    if scale_shift > 1.5: scale_shift = 0.5
+    updateScaleShift(scale_shift)
+    if sliderScaleShift != 0: ac.setValue(sliderScaleShift, int(scale_shift * 100))
+    saveConfig()
+
+def onScaleTiresClick(x, y):
+    global scale_tires, sliderScaleTires
+    scale_tires = round(scale_tires + 0.1, 1)
+    if scale_tires > 1.5: scale_tires = 0.5
+    updateScaleTires(scale_tires)
+    if sliderScaleTires != 0: ac.setValue(sliderScaleTires, int(scale_tires * 100))
+    saveConfig()
+
+def onScaleSpeedClick(x, y):
+    global scale_speed, sliderScaleSpeed
+    scale_speed = round(scale_speed + 0.1, 1)
+    if scale_speed > 1.5: scale_speed = 0.5
+    updateScaleSpeed(scale_speed)
+    if sliderScaleSpeed != 0: ac.setValue(sliderScaleSpeed, int(scale_speed * 100))
+    saveConfig()
+
+def onScaleGearClick(x, y):
+    global scale_gear, sliderScaleGear
+    scale_gear = round(scale_gear + 0.1, 1)
+    if scale_gear > 1.5: scale_gear = 0.5
+    updateScaleGear(scale_gear)
+    if sliderScaleGear != 0: ac.setValue(sliderScaleGear, int(scale_gear * 100))
+    saveConfig()
+
+def onScalePedalsClick(x, y):
+    global scale_pedals, sliderScalePedals
+    scale_pedals = round(scale_pedals + 0.1, 1)
+    if scale_pedals > 1.5: scale_pedals = 0.5
+    updateScalePedals(scale_pedals)
+    if sliderScalePedals != 0: ac.setValue(sliderScalePedals, int(scale_pedals * 100))
+    saveConfig()
+
+def onScaleKersClick(x, y):
+    global scale_kers, sliderScaleKers
+    scale_kers = round(scale_kers + 0.1, 1)
+    if scale_kers > 1.5: scale_kers = 0.5
+    updateScaleKers(scale_kers)
+    if sliderScaleKers != 0: ac.setValue(sliderScaleKers, int(scale_kers * 100))
+    saveConfig()
+
+def onScaleTimesClick(x, y):
+    global scale_times, sliderScaleTimes
+    scale_times = round(scale_times + 0.1, 1)
+    if scale_times > 1.5: scale_times = 0.5
+    updateScaleTimes(scale_times)
+    if sliderScaleTimes != 0: ac.setValue(sliderScaleTimes, int(scale_times * 100))
+    saveConfig()
+
+def onScaleFuelClick(x, y):
+    global scale_fuel, sliderScaleFuel
+    scale_fuel = round(scale_fuel + 0.1, 1)
+    if scale_fuel > 1.5: scale_fuel = 0.5
+    updateScaleFuel(scale_fuel)
+    if sliderScaleFuel != 0: ac.setValue(sliderScaleFuel, int(scale_fuel * 100))
+    saveConfig()
+
+def onScalePerfClick(x, y):
+    global scale_perf, sliderScalePerf
+    scale_perf = round(scale_perf + 0.1, 1)
+    if scale_perf > 1.5: scale_perf = 0.5
+    updateScalePerf(scale_perf)
+    if sliderScalePerf != 0: ac.setValue(sliderScalePerf, int(scale_perf * 100))
+    saveConfig()
+
+def onScaleDamageClick(x, y):
+    global scale_damage, sliderScaleDamage
+    scale_damage = round(scale_damage + 0.1, 1)
+    if scale_damage > 1.5: scale_damage = 0.5
+    updateScaleDamage(scale_damage)
+    if sliderScaleDamage != 0: ac.setValue(sliderScaleDamage, int(scale_damage * 100))
+    saveConfig()
+
+def onScaleTrackClick(x, y):
+    global scale_track, sliderScaleTrack
+    scale_track = round(scale_track + 0.1, 1)
+    if scale_track > 1.5: scale_track = 0.5
+    updateScaleTrack(scale_track)
+    if sliderScaleTrack != 0: ac.setValue(sliderScaleTrack, int(scale_track * 100))
+    saveConfig()
+
+def onScaleDebugClick(x, y):
+    global scale_debug, sliderScaleDebug
+    scale_debug = round(scale_debug + 0.1, 1)
+    if scale_debug > 1.5: scale_debug = 0.5
+    updateScaleDebug(scale_debug)
+    if sliderScaleDebug != 0: ac.setValue(sliderScaleDebug, int(scale_debug * 100))
+    saveConfig()
 
 def formatTime(ms):
     if ms <= 0:
@@ -556,6 +703,7 @@ def acMain(ac_version):
     global imgTrack, lblTrackGrip, lblTrackWind
     global lblOpacityName, sliderOpacity, lblBgColorName, sliderBgColor, lblTextColorName, sliderTextColor
     global sliderScaleShift, sliderScaleTires, sliderScaleSpeed, sliderScaleGear, sliderScalePedals, sliderScaleKers, sliderScaleTimes, sliderScaleFuel, sliderScalePerf, sliderScaleDamage, sliderScaleTrack, sliderScaleDebug
+    global btnScaleShift, btnScaleTires, btnScaleSpeed, btnScaleGear, btnScalePedals, btnScaleKers, btnScaleTimes, btnScaleFuel, btnScalePerf, btnScaleDamage, btnScaleTrack, btnScaleDebug
     global last_opacity_value, last_bg_color_value, last_text_color_value
     global last_scale_shift, last_scale_tires, last_scale_speed, last_scale_gear, last_scale_pedals, last_scale_kers, last_scale_times, last_scale_fuel, last_scale_perf, last_scale_damage, last_scale_track, last_scale_debug
 
@@ -573,6 +721,10 @@ def acMain(ac_version):
         ac.setIconPosition(appShift, -10000, -10000)
         ac.addRenderCallback(appShift, drawShiftGL)
 
+        btnScaleShift = ac.addButton(appShift, "+")
+        ac.setText(btnScaleShift, "+")
+        ac.addOnClickedListener(btnScaleShift, onScaleShiftClick)
+
         # ---------------------------------------------
         # 2. APP: TIRES & BRAKES STATUS (310px x 125px)
         # ---------------------------------------------
@@ -583,7 +735,11 @@ def acMain(ac_version):
         ac.setIconPosition(appTires, -10000, -10000)
         ac.addRenderCallback(appTires, drawTiresGL)
 
-        # Labels (All made bold natively)
+        btnScaleTires = ac.addButton(appTires, "+")
+        ac.setText(btnScaleTires, "+")
+        ac.addOnClickedListener(btnScaleTires, onScaleTiresClick)
+
+        # Labels
         lblPressFL = createBoldLabel(appTires, "0\n0.0")
         ac.setPosition(lblPressFL, int(round(15 * scale_tires)), int(round(22 * scale_tires)))
         ac.setFontSize(lblPressFL, int(round(24 * scale_tires)))
@@ -628,6 +784,10 @@ def acMain(ac_version):
         ac.setIconPosition(appSpeed, -10000, -10000)
         ac.addRenderCallback(appSpeed, drawSpeedGL)
 
+        btnScaleSpeed = ac.addButton(appSpeed, "+")
+        ac.setText(btnScaleSpeed, "+")
+        ac.addOnClickedListener(btnScaleSpeed, onScaleSpeedClick)
+
         lblSpeed = createBoldLabel(appSpeed, "0 KM/H")
         ac.setPosition(lblSpeed, int(round(70 * scale_speed)), int(round(42 * scale_speed)))
         ac.setFontSize(lblSpeed, int(round(24 * scale_speed)))
@@ -647,6 +807,10 @@ def acMain(ac_version):
         ac.setTitle(appGear, "")
         ac.drawBorder(appGear, 0)
         ac.setIconPosition(appGear, -10000, -10000)
+
+        btnScaleGear = ac.addButton(appGear, "+")
+        ac.setText(btnScaleGear, "+")
+        ac.addOnClickedListener(btnScaleGear, onScaleGearClick)
 
         lblGear = createBoldLabel(appGear, "G1")
         ac.setPosition(lblGear, int(round(70 * scale_gear)), int(round(34 * scale_gear)))
@@ -673,6 +837,10 @@ def acMain(ac_version):
         ac.drawBorder(appPedals, 0)
         ac.setIconPosition(appPedals, -10000, -10000)
         ac.addRenderCallback(appPedals, drawPedalsGL)
+
+        btnScalePedals = ac.addButton(appPedals, "+")
+        ac.setText(btnScalePedals, "+")
+        ac.addOnClickedListener(btnScalePedals, onScalePedalsClick)
 
         # Pedal Custom Vector Icons (Standardized size to 18x18)
         imgPedalClutch = ac.addLabel(appPedals, "")
@@ -715,6 +883,10 @@ def acMain(ac_version):
         ac.setIconPosition(appKers, -10000, -10000)
         ac.addRenderCallback(appKers, drawKersGL)
 
+        btnScaleKers = ac.addButton(appKers, "+")
+        ac.setText(btnScaleKers, "+")
+        ac.addOnClickedListener(btnScaleKers, onScaleKersClick)
+
         # KERS & Wear Vector Icons (Standardized size to 24x24)
         imgKers = ac.addLabel(appKers, "")
         ac.setBackgroundTexture(imgKers, "apps/python/AlaschgariHUD/images/kers_icon.png")
@@ -735,6 +907,10 @@ def acMain(ac_version):
         ac.drawBorder(appTimes, 0)
         ac.setIconPosition(appTimes, -10000, -10000)
         ac.addRenderCallback(appTimes, drawTimesGL)
+
+        btnScaleTimes = ac.addButton(appTimes, "+")
+        ac.setText(btnScaleTimes, "+")
+        ac.addOnClickedListener(btnScaleTimes, onScaleTimesClick)
 
         lblTimesCurrent = createBoldLabel(appTimes, "--:--.-")
         ac.setPosition(lblTimesCurrent, int(round(81 * scale_times)), int(round(22 * scale_times)))
@@ -765,6 +941,10 @@ def acMain(ac_version):
         ac.setIconPosition(appFuel, -10000, -10000)
         ac.addRenderCallback(appFuel, drawFuelGL)
 
+        btnScaleFuel = ac.addButton(appFuel, "+")
+        ac.setText(btnScaleFuel, "+")
+        ac.addOnClickedListener(btnScaleFuel, onScaleFuelClick)
+
         lblFuelCurrent = createBoldLabel(appFuel, "0.0 L")
         ac.setPosition(lblFuelCurrent, int(round(81 * scale_fuel)), int(round(22 * scale_fuel)))
         ac.setFontSize(lblFuelCurrent, int(round(24 * scale_fuel)))
@@ -792,6 +972,10 @@ def acMain(ac_version):
         ac.setTitle(appPerf, "")
         ac.drawBorder(appPerf, 0)
         ac.setIconPosition(appPerf, -10000, -10000)
+
+        btnScalePerf = ac.addButton(appPerf, "+")
+        ac.setText(btnScalePerf, "+")
+        ac.addOnClickedListener(btnScalePerf, onScalePerfClick)
 
         imgPerf = ac.addLabel(appPerf, "")
         ac.setBackgroundTexture(imgPerf, "apps/python/AlaschgariHUD/images/delta_icon.png")
@@ -821,6 +1005,10 @@ def acMain(ac_version):
         ac.drawBorder(appDamage, 0)
         ac.setIconPosition(appDamage, -10000, -10000)
 
+        btnScaleDamage = ac.addButton(appDamage, "+")
+        ac.setText(btnScaleDamage, "+")
+        ac.addOnClickedListener(btnScaleDamage, onScaleDamageClick)
+
         imgDamage = ac.addLabel(appDamage, "")
         ac.setBackgroundTexture(imgDamage, "apps/python/AlaschgariHUD/images/damage_icon.png")
         ac.setPosition(imgDamage, int(round(12 * scale_damage)), int(round(23 * scale_damage)))
@@ -849,6 +1037,10 @@ def acMain(ac_version):
         ac.drawBorder(appTrack, 0)
         ac.setIconPosition(appTrack, -10000, -10000)
 
+        btnScaleTrack = ac.addButton(appTrack, "+")
+        ac.setText(btnScaleTrack, "+")
+        ac.addOnClickedListener(btnScaleTrack, onScaleTrackClick)
+
         imgTrack = ac.addLabel(appTrack, "")
         ac.setBackgroundTexture(imgTrack, "apps/python/AlaschgariHUD/images/track_icon.png")
         ac.setPosition(imgTrack, int(round(12 * scale_track)), int(round(23 * scale_track)))
@@ -872,6 +1064,10 @@ def acMain(ac_version):
         ac.drawBorder(appDebug, 0)
         ac.setIconPosition(appDebug, -10000, -10000)
 
+        btnScaleDebug = ac.addButton(appDebug, "+")
+        ac.setText(btnScaleDebug, "+")
+        ac.addOnClickedListener(btnScaleDebug, onScaleDebugClick)
+
         lblDebugError = createBoldLabel(appDebug, "System Health: OK")
         ac.setPosition(lblDebugError, int(round(10 * scale_debug)), int(round(12 * scale_debug)))
         ac.setFontSize(lblDebugError, int(round(24 * scale_debug)))
@@ -879,6 +1075,20 @@ def acMain(ac_version):
 
         # Apply starting backgrounds and opacities nativly
         updateWindowsBackground()
+
+        # Apply starting sizes/positions for buttons
+        updateScaleShift(scale_shift)
+        updateScaleTires(scale_tires)
+        updateScaleSpeed(scale_speed)
+        updateScaleGear(scale_gear)
+        updateScalePedals(scale_pedals)
+        updateScaleKers(scale_kers)
+        updateScaleTimes(scale_times)
+        updateScaleFuel(scale_fuel)
+        updateScalePerf(scale_perf)
+        updateScaleDamage(scale_damage)
+        updateScaleTrack(scale_track)
+        updateScaleDebug(scale_debug)
 
         # ---------------------------------------------
         # 6. APP: HUD IN-GAME CONFIG WINDOW
