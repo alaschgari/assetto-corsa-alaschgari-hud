@@ -230,8 +230,8 @@ def updateScale(new_scale):
     
     # 1. Resize all modular windows
     ac.setSize(appShift, int(round(480 * scale)), int(round(20 * scale)))
-    ac.setSize(appTires, int(round(310 * scale)), int(round(112 * scale)))
-    ac.setSize(appSpeed, int(round(290 * scale)), int(round(112 * scale)))
+    ac.setSize(appTires, int(round(310 * scale)), int(round(125 * scale)))
+    ac.setSize(appSpeed, int(round(290 * scale)), int(round(125 * scale)))
     ac.setSize(appPedals, int(round(162 * scale)), int(round(70 * scale)))
     ac.setSize(appKers, int(round(162 * scale)), int(round(45 * scale)))
 
@@ -306,10 +306,10 @@ def acMain(ac_version):
         ac.addRenderCallback(appShift, drawShiftGL)
 
         # ---------------------------------------------
-        # 2. APP: TIRES & BRAKES STATUS (310px x 112px)
+        # 2. APP: TIRES & BRAKES STATUS (310px x 125px)
         # ---------------------------------------------
         appTires = ac.newApp("AlaschgariHUD - Tires & Brakes")
-        ac.setSize(appTires, int(round(310 * scale)), int(round(112 * scale)))
+        ac.setSize(appTires, int(round(310 * scale)), int(round(125 * scale)))
         ac.setTitle(appTires, "")
         ac.drawBorder(appTires, 0)
         ac.setBackgroundOpacity(appTires, 0.0)
@@ -346,10 +346,10 @@ def acMain(ac_version):
         ac.setFontColor(lblBrakeR, 1.0, 0.2, 0.2, 1.0)
 
         # ---------------------------------------------
-        # 3. APP: SPEEDOMETER & GEAR (290px x 112px)
+        # 3. APP: SPEEDOMETER & GEAR (290px x 125px)
         # ---------------------------------------------
         appSpeed = ac.newApp("AlaschgariHUD - Speed & Gear")
-        ac.setSize(appSpeed, int(round(290 * scale)), int(round(112 * scale)))
+        ac.setSize(appSpeed, int(round(290 * scale)), int(round(125 * scale)))
         ac.setTitle(appSpeed, "")
         ac.drawBorder(appSpeed, 0)
         ac.setBackgroundOpacity(appSpeed, 0.0)
