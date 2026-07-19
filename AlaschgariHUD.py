@@ -99,6 +99,7 @@ lblPressRL = 0
 lblPressRR = 0
 lblBrakeF = 0
 lblBrakeR = 0
+imgChassis = 0
 
 # Speed App
 lblSpeed = 0
@@ -108,16 +109,16 @@ lblGearLabel = 0
 lblGForce = 0
 
 # Pedals App
-lblPedalClutch = 0
-lblPedalBrake = 0
-lblPedalThrottle = 0
 lblPedalClutchVal = 0
 lblPedalBrakeVal = 0
 lblPedalThrottleVal = 0
+imgPedalClutch = 0
+imgPedalBrake = 0
+imgPedalThrottle = 0
 
 # KERS & Wear App
-lblKersName = 0
-lblWearName = 0
+imgKers = 0
+imgWear = 0
 
 # Times App
 lblTimesCurrent = 0
@@ -225,8 +226,7 @@ def saveConfig():
 
 def applyTextColors():
     global text_color_idx, lblSpeed, lblGForce, lblPressFL, lblPressFR, lblPressRL, lblPressRR
-    global lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal, lblKersName, lblWearName
-    global lblPedalClutch, lblPedalBrake, lblPedalThrottle
+    global lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
     global lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
     global lblFuelCurrent, lblFuelCons, lblFuelEst, lblFuelTemps
     
@@ -235,7 +235,6 @@ def applyTextColors():
         labels = [
             lblSpeed, lblGForce, lblPressFL, lblPressFR, lblPressRL, lblPressRR,
             lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal,
-            lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblKersName, lblWearName,
             lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps,
             lblFuelCurrent, lblFuelCons, lblFuelEst, lblFuelTemps
         ]
@@ -248,10 +247,10 @@ def applyTextColors():
 def updateScale(new_scale):
     global scale
     global appShift, appTires, appSpeed, appPedals, appKers, appTimes, appFuel
-    global lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR
+    global lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR, imgChassis
     global lblSpeed, lblSpeedLabel, lblGear, lblGearLabel, lblGForce
-    global lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
-    global lblKersName, lblWearName
+    global imgPedalClutch, imgPedalBrake, imgPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
+    global imgKers, imgWear
     global lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
     global lblFuelCurrent, lblFuelCons, lblFuelEst, lblFuelTemps
 
@@ -279,6 +278,9 @@ def updateScale(new_scale):
     ac.setFontSize(lblBrakeF, int(round(13 * scale)))
     ac.setPosition(lblBrakeR, int(round(265 * scale)), int(round(72 * scale)))
     ac.setFontSize(lblBrakeR, int(round(13 * scale)))
+    if imgChassis != 0:
+        ac.setPosition(imgChassis, int(round(110 * scale)), int(round(10 * scale)))
+        ac.setSize(imgChassis, int(round(90 * scale)), int(round(90 * scale)))
 
     # 3. Update Speed label positions and fonts
     ac.setPosition(lblSpeed, int(round(70 * scale)), int(round(42 * scale)))
@@ -293,12 +295,16 @@ def updateScale(new_scale):
     ac.setFontSize(lblGearLabel, int(round(8 * scale)))
 
     # 4. Update Pedals label positions and fonts
-    ac.setPosition(lblPedalClutch, int(round(8 * scale)), int(round(5 * scale)))
-    ac.setFontSize(lblPedalClutch, int(round(8 * scale)))
-    ac.setPosition(lblPedalBrake, int(round(8 * scale)), int(round(23 * scale)))
-    ac.setFontSize(lblPedalBrake, int(round(8 * scale)))
-    ac.setPosition(lblPedalThrottle, int(round(8 * scale)), int(round(41 * scale)))
-    ac.setFontSize(lblPedalThrottle, int(round(8 * scale)))
+    if imgPedalClutch != 0:
+        ac.setPosition(imgPedalClutch, int(round(12 * scale)), int(round(6 * scale)))
+        ac.setSize(imgPedalClutch, int(round(14 * scale)), int(round(14 * scale)))
+    if imgPedalBrake != 0:
+        ac.setPosition(imgPedalBrake, int(round(12 * scale)), int(round(24 * scale)))
+        ac.setSize(imgPedalBrake, int(round(14 * scale)), int(round(14 * scale)))
+    if imgPedalThrottle != 0:
+        ac.setPosition(imgPedalThrottle, int(round(12 * scale)), int(round(42 * scale)))
+        ac.setSize(imgPedalThrottle, int(round(14 * scale)), int(round(14 * scale)))
+
     ac.setPosition(lblPedalClutchVal, int(round(154 * scale)), int(round(5 * scale)))
     ac.setFontSize(lblPedalClutchVal, int(round(8 * scale)))
     ac.setPosition(lblPedalBrakeVal, int(round(154 * scale)), int(round(23 * scale)))
@@ -307,10 +313,12 @@ def updateScale(new_scale):
     ac.setFontSize(lblPedalThrottleVal, int(round(8 * scale)))
 
     # 5. Update KERS label positions and fonts
-    ac.setPosition(lblKersName, int(round(12 * scale)), int(round(16 * scale)))
-    ac.setFontSize(lblKersName, int(round(9 * scale)))
-    ac.setPosition(lblWearName, int(round(90 * scale)), int(round(16 * scale)))
-    ac.setFontSize(lblWearName, int(round(9 * scale)))
+    if imgKers != 0:
+        ac.setPosition(imgKers, int(round(12 * scale)), int(round(12 * scale)))
+        ac.setSize(imgKers, int(round(20 * scale)), int(round(20 * scale)))
+    if imgWear != 0:
+        ac.setPosition(imgWear, int(round(96 * scale)), int(round(12 * scale)))
+        ac.setSize(imgWear, int(round(20 * scale)), int(round(20 * scale)))
 
     # 6. Update Times label positions and fonts
     ac.setPosition(lblTimesCurrent, int(round(81 * scale)), int(round(22 * scale)))
@@ -354,10 +362,10 @@ def formatTimeShort(ms):
 def acMain(ac_version):
     global scale, lblDebugError, bg_color_idx, opacity_pct, text_color_idx
     global appShift, appTires, appSpeed, appPedals, appKers, appTimes, appFuel, appSettings
-    global lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR
+    global lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR, imgChassis
     global lblSpeed, lblSpeedLabel, lblGear, lblGearLabel, lblGForce
-    global lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
-    global lblKersName, lblWearName
+    global imgPedalClutch, imgPedalBrake, imgPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
+    global imgKers, imgWear
     global lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
     global lblFuelCurrent, lblFuelCons, lblFuelEst, lblFuelTemps
     global lblSliderName, sliderScale, lblOpacityName, sliderOpacity, lblBgColorName, sliderBgColor, lblTextColorName, sliderTextColor
@@ -417,6 +425,11 @@ def acMain(ac_version):
         ac.setFontSize(lblBrakeR, int(round(13 * scale)))
         ac.setFontColor(lblBrakeR, 1.0, 0.2, 0.2, 1.0)
 
+        # Car Chassis Vector Overlay
+        imgChassis = ac.addImage(appTires, "apps/python/AlaschgariHUD/images/chassis_vector.png")
+        ac.setPosition(imgChassis, int(round(110 * scale)), int(round(10 * scale)))
+        ac.setSize(imgChassis, int(round(90 * scale)), int(round(90 * scale)))
+
         # ---------------------------------------------
         # 3. APP: SPEEDOMETER & GEAR (290px x 125px)
         # ---------------------------------------------
@@ -466,17 +479,18 @@ def acMain(ac_version):
         ac.setIconPosition(appPedals, -10000, -10000)
         ac.addRenderCallback(appPedals, drawPedalsGL)
 
-        lblPedalClutch = ac.addLabel(appPedals, "Clutch")
-        ac.setPosition(lblPedalClutch, int(round(8 * scale)), int(round(5 * scale)))
-        ac.setFontSize(lblPedalClutch, int(round(8 * scale)))
+        # Pedal Custom Vector Icons (transparents)
+        imgPedalClutch = ac.addImage(appPedals, "apps/python/AlaschgariHUD/images/pedal_brake.png")
+        ac.setPosition(imgPedalClutch, int(round(12 * scale)), int(round(6 * scale)))
+        ac.setSize(imgPedalClutch, int(round(14 * scale)), int(round(14 * scale)))
 
-        lblPedalBrake = ac.addLabel(appPedals, "Brake")
-        ac.setPosition(lblPedalBrake, int(round(8 * scale)), int(round(23 * scale)))
-        ac.setFontSize(lblPedalBrake, int(round(8 * scale)))
+        imgPedalBrake = ac.addImage(appPedals, "apps/python/AlaschgariHUD/images/pedal_brake.png")
+        ac.setPosition(imgPedalBrake, int(round(12 * scale)), int(round(24 * scale)))
+        ac.setSize(imgPedalBrake, int(round(14 * scale)), int(round(14 * scale)))
 
-        lblPedalThrottle = ac.addLabel(appPedals, "Throt")
-        ac.setPosition(lblPedalThrottle, int(round(8 * scale)), int(round(41 * scale)))
-        ac.setFontSize(lblPedalThrottle, int(round(8 * scale)))
+        imgPedalThrottle = ac.addImage(appPedals, "apps/python/AlaschgariHUD/images/pedal_throttle.png")
+        ac.setPosition(imgPedalThrottle, int(round(12 * scale)), int(round(42 * scale)))
+        ac.setSize(imgPedalThrottle, int(round(14 * scale)), int(round(14 * scale)))
 
         lblPedalClutchVal = ac.addLabel(appPedals, "0%")
         ac.setPosition(lblPedalClutchVal, int(round(154 * scale)), int(round(5 * scale)))
@@ -504,13 +518,14 @@ def acMain(ac_version):
         ac.setIconPosition(appKers, -10000, -10000)
         ac.addRenderCallback(appKers, drawKersGL)
 
-        lblKersName = ac.addLabel(appKers, "KERS")
-        ac.setPosition(lblKersName, int(round(12 * scale)), int(round(16 * scale)))
-        ac.setFontSize(lblKersName, int(round(9 * scale)))
+        # KERS & Wear Vector Icons (transparents)
+        imgKers = ac.addImage(appKers, "apps/python/AlaschgariHUD/images/kers_icon.png")
+        ac.setPosition(imgKers, int(round(12 * scale)), int(round(12 * scale)))
+        ac.setSize(imgKers, int(round(20 * scale)), int(round(20 * scale)))
 
-        lblWearName = ac.addLabel(appKers, "WEAR")
-        ac.setPosition(lblWearName, int(round(90 * scale)), int(round(16 * scale)))
-        ac.setFontSize(lblWearName, int(round(9 * scale)))
+        imgWear = ac.addImage(appKers, "apps/python/AlaschgariHUD/images/wear_icon.png")
+        ac.setPosition(imgWear, int(round(96 * scale)), int(round(12 * scale)))
+        ac.setSize(imgWear, int(round(20 * scale)), int(round(20 * scale)))
 
         # ---------------------------------------------
         # 5b. APP: LAPS & TIMES (162px x 70px)
@@ -751,15 +766,6 @@ def drawTiresGL(deltaT):
         # Rounded Panel Background (Height remains 112px inside 125px window)
         col_bg = getBGColor()
         drawRoundedRect(0, 0, int(round(310 * scale)), int(round(112 * scale)), int(round(6 * scale)), col_bg)
-
-        # Chassis
-        if show_chassis:
-            ac.glColor4f(1.0, 1.0, 1.0, 0.12)
-            # Outline
-            ac.glQuad(int(round(110 * scale)), int(round(10 * scale)), int(round(60 * scale)), int(round(90 * scale)))
-            # Axles
-            ac.glQuad(int(round(95 * scale)), int(round(30 * scale)), int(round(90 * scale)), int(round(1.5 * scale)))
-            ac.glQuad(int(round(95 * scale)), int(round(80 * scale)), int(round(90 * scale)), int(round(1.5 * scale)))
 
         # Tires (FL, FR, RL, RR)
         # FL
