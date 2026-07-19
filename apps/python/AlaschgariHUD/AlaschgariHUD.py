@@ -333,7 +333,7 @@ def saveConfig():
     try:
         path = getConfigPath()
         with open(path, 'w') as f:
-            f.write("[SETTINGS]\n")
+            f.write("[WIDGETS_SCALE]\n")
             f.write("scale_shift = " + str(int(scale_shift * 100)) + "\n")
             f.write("scale_tires = " + str(int(scale_tires * 100)) + "\n")
             f.write("scale_speed = " + str(int(scale_speed * 100)) + "\n")
@@ -345,10 +345,14 @@ def saveConfig():
             f.write("scale_perf = " + str(int(scale_perf * 100)) + "\n")
             f.write("scale_damage = " + str(int(scale_damage * 100)) + "\n")
             f.write("scale_track = " + str(int(scale_track * 100)) + "\n")
-            f.write("scale_debug = " + str(int(scale_debug * 100)) + "\n")
+            f.write("scale_debug = " + str(int(scale_debug * 100)) + "\n\n")
+            
+            f.write("[WIDGETS_VISIBILITY]\n")
             f.write("show_rpm = " + str(show_rpm) + "\n")
             f.write("show_chassis = " + str(show_chassis) + "\n")
-            f.write("show_tire_bars = " + str(show_tire_bars) + "\n")
+            f.write("show_tire_bars = " + str(show_tire_bars) + "\n\n")
+            
+            f.write("[HUD_STYLE]\n")
             f.write("bg_color_idx = " + str(bg_color_idx) + "\n")
             f.write("opacity_pct = " + str(opacity_pct) + "\n")
             f.write("text_color_idx = " + str(text_color_idx) + "\n")
