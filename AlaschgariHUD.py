@@ -479,77 +479,77 @@ def drawTiresGL(deltaT):
     try:
         # Panel Background
         ac.glColor4f(0.08, 0.09, 0.12, 0.65)
-        ac.glQuad(0, 0, int(310 * scale), int(112 * scale))
+        ac.glQuad(0, 0, int(round(310 * scale)), int(round(112 * scale)))
 
         # Chassis
         if show_chassis:
             ac.glColor4f(1.0, 1.0, 1.0, 0.12)
             # Outline
-            ac.glQuad(int(110 * scale), int(10 * scale), int(60 * scale), int(90 * scale))
+            ac.glQuad(int(round(110 * scale)), int(round(10 * scale)), int(round(60 * scale)), int(round(90 * scale)))
             # Axles
-            ac.glQuad(int(95 * scale), int(30 * scale), int(90 * scale), int(1.5 * scale))
-            ac.glQuad(int(95 * scale), int(80 * scale), int(90 * scale), int(1.5 * scale))
+            ac.glQuad(int(round(95 * scale)), int(round(30 * scale)), int(round(90 * scale)), int(round(1.5 * scale)))
+            ac.glQuad(int(round(95 * scale)), int(round(80 * scale)), int(round(90 * scale)), int(round(1.5 * scale)))
 
         # Tires (FL, FR, RL, RR)
         # FL
         col = getTireColor(tireTemps[0])
         ac.glColor4f(col[0], col[1], col[2], col[3])
-        ac.glQuad(int(80 * scale), int(10 * scale), int(14 * scale), int(26 * scale))
+        ac.glQuad(int(round(80 * scale)), int(round(10 * scale)), int(round(14 * scale)), int(round(26 * scale)))
 
         # FR
         col = getTireColor(tireTemps[1])
         ac.glColor4f(col[0], col[1], col[2], col[3])
-        ac.glQuad(int(168 * scale), int(10 * scale), int(14 * scale), int(26 * scale))
+        ac.glQuad(int(round(168 * scale)), int(round(10 * scale)), int(round(14 * scale)), int(round(26 * scale)))
 
         # RL
         col = getTireColor(tireTemps[2])
         ac.glColor4f(col[0], col[1], col[2], col[3])
-        ac.glQuad(int(80 * scale), int(60 * scale), int(14 * scale), int(26 * scale))
+        ac.glQuad(int(round(80 * scale)), int(round(60 * scale)), int(round(14 * scale)), int(round(26 * scale)))
 
         # RR
         col = getTireColor(tireTemps[3])
         ac.glColor4f(col[0], col[1], col[2], col[3])
-        ac.glQuad(int(168 * scale), int(60 * scale), int(14 * scale), int(26 * scale))
+        ac.glQuad(int(round(168 * scale)), int(round(60 * scale)), int(round(14 * scale)), int(round(26 * scale)))
 
         if show_tire_bars:
             # FL Bar
             ac.glColor4f(0.05, 0.05, 0.05, 0.9)
-            ac.glQuad(int(80 * scale), int(39 * scale), int(20 * scale), int(4 * scale))
+            ac.glQuad(int(round(80 * scale)), int(round(39 * scale)), int(round(20 * scale)), int(round(4 * scale)))
             col = getTireColor(tireTemps[0])
             ac.glColor4f(col[0], col[1], col[2], col[3])
             pct = max(0.0, min(1.0, (float(tireTemps[0]) - 40.0) / 80.0))
-            ac.glQuad(int(80 * scale), int(39 * scale), int(20 * pct * scale), int(4 * scale))
+            ac.glQuad(int(round(80 * scale)), int(round(39 * scale)), int(round(20 * pct * scale)), int(round(4 * scale)))
 
             # FR Bar
             ac.glColor4f(0.05, 0.05, 0.05, 0.9)
-            ac.glQuad(int(168 * scale), int(39 * scale), int(20 * scale), int(4 * scale))
+            ac.glQuad(int(round(168 * scale)), int(round(39 * scale)), int(round(20 * scale)), int(round(4 * scale)))
             col = getTireColor(tireTemps[1])
             ac.glColor4f(col[0], col[1], col[2], col[3])
             pct = max(0.0, min(1.0, (float(tireTemps[1]) - 40.0) / 80.0))
-            ac.glQuad(int(168 * scale), int(39 * scale), int(20 * pct * scale), int(4 * scale))
+            ac.glQuad(int(round(168 * scale)), int(round(39 * scale)), int(round(20 * pct * scale)), int(round(4 * scale)))
 
             # RL Bar
             ac.glColor4f(0.05, 0.05, 0.05, 0.9)
-            ac.glQuad(int(80 * scale), int(89 * scale), int(20 * scale), int(4 * scale))
+            ac.glQuad(int(round(80 * scale)), int(round(89 * scale)), int(round(20 * scale)), int(round(4 * scale)))
             col = getTireColor(tireTemps[2])
             ac.glColor4f(col[0], col[1], col[2], col[3])
             pct = max(0.0, min(1.0, (float(tireTemps[2]) - 40.0) / 80.0))
-            ac.glQuad(int(80 * scale), int(89 * scale), int(20 * pct * scale), int(4 * scale))
+            ac.glQuad(int(round(80 * scale)), int(round(89 * scale)), int(round(20 * pct * scale)), int(round(4 * scale)))
 
             # RR Bar
             ac.glColor4f(0.05, 0.05, 0.05, 0.9)
-            ac.glQuad(int(168 * scale), int(89 * scale), int(20 * scale), int(4 * scale))
+            ac.glQuad(int(round(168 * scale)), int(round(89 * scale)), int(round(20 * scale)), int(round(4 * scale)))
             col = getTireColor(tireTemps[3])
             ac.glColor4f(col[0], col[1], col[2], col[3])
             pct = max(0.0, min(1.0, (float(tireTemps[3]) - 40.0) / 80.0))
-            ac.glQuad(int(168 * scale), int(89 * scale), int(20 * pct * scale), int(4 * scale))
+            ac.glQuad(int(round(168 * scale)), int(round(89 * scale)), int(round(20 * pct * scale)), int(round(4 * scale)))
 
         # Brake Indicator Bars
         ac.glColor4f(1.0, 0.2, 0.2, 0.8)
         bf_pct = max(0.0, min(1.0, float(brakeTemps[0]) / 800.0))
-        ac.glQuad(int(265 * scale), int(20 * scale), int(30 * bf_pct * scale), int(5 * scale))
+        ac.glQuad(int(round(265 * scale)), int(round(20 * scale)), int(round(30 * bf_pct * scale)), int(round(5 * scale)))
         br_pct = max(0.0, min(1.0, float(brakeTemps[2]) / 800.0))
-        ac.glQuad(int(265 * scale), int(70 * scale), int(30 * br_pct * scale), int(5 * scale))
+        ac.glQuad(int(round(265 * scale)), int(round(70 * scale)), int(round(30 * br_pct * scale)), int(round(5 * scale)))
     except Exception as e:
         log_error("drawTiresGL failed:\n" + traceback.format_exc())
 
