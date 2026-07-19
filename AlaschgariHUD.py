@@ -693,13 +693,36 @@ def drawTiresGL(deltaT):
         log_error("drawTiresGL failed:\n" + traceback.format_exc())
 
 def drawSpeedGL(deltaT):
-    global scale
+    global scale, speed, text_color_idx
     try:
         col_bg = getBGColor()
         # Speedometer Box with rounded corners
         drawRoundedRect(0, 0, int(round(140 * scale)), int(round(112 * scale)), int(round(6 * scale)), col_bg)
         # Gear / G-Force Box with rounded corners
         drawRoundedRect(int(round(150 * scale)), 0, int(round(140 * scale)), int(round(112 * scale)), int(round(6 * scale)), col_bg)
+
+        # Draw Speedometer Circular Gauge Track (0 to 300 KM/H)
+        ac.glColor4f(0.15, 0.15, 0.15, 0.8)
+        cx, cy = 70.0, 48.0
+        r = 46.0
+        for deg in range(-220, 40, 3):
+            rad = math.radians(deg)
+            px = int(round((cx + r * math.cos(rad)) * scale))
+            py = int(round((cy + r * math.sin(rad)) * scale))
+            ac.glQuad(px - int(round(2 * scale)), py - int(round(2 * scale)), int(round(4 * scale)), int(round(4 * scale)))
+
+        # Draw Active Speedometer Gauge Arc (Colored)
+        c = TEXT_COLORS[text_color_idx]
+        ac.glColor4f(c[0], c[1], c[2], 0.9)
+        speed_pct = max(0.0, min(1.0, float(speed) / 300.0))
+        active_deg = int(round(speed_pct * 260.0))
+        
+        for deg in range(-220, -220 + active_deg, 3):
+            rad = math.radians(deg)
+            px = int(round((cx + r * math.cos(rad)) * scale))
+            py = int(round((cy + r * math.sin(rad)) * scale))
+            ac.glQuad(px - int(round(2 * scale)), py - int(round(2 * scale)), int(round(4 * scale)), int(round(4 * scale)))
+            
     except Exception as e:
         log_error("drawSpeedGL failed:\n" + traceback.format_exc())
 
