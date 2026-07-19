@@ -81,12 +81,13 @@ bg_color_idx = 0
 opacity_pct = 65
 text_color_idx = 0
 
-# 6 App Windows
+# App Windows
 appShift = 0
 appTires = 0
 appSpeed = 0
 appPedals = 0
 appKers = 0
+appTimes = 0
 appSettings = 0
 
 # UI Controls per app window
@@ -116,6 +117,12 @@ lblPedalThrottleVal = 0
 # KERS & Wear App
 lblKersName = 0
 lblWearName = 0
+
+# Times App
+lblTimesCurrent = 0
+lblTimesBest = 0
+lblTimesLast = 0
+lblTimesLaps = 0
 
 # Settings App
 lblSliderName = 0
@@ -207,12 +214,17 @@ def applyTextColors():
     global text_color_idx, lblSpeed, lblGForce, lblPressFL, lblPressFR, lblPressRL, lblPressRR
     global lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal, lblKersName, lblWearName
     global lblPedalClutch, lblPedalBrake, lblPedalThrottle
+    global lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
     
     try:
         c = TEXT_COLORS[text_color_idx]
-        for lbl in [lblSpeed, lblGForce, lblPressFL, lblPressFR, lblPressRL, lblPressRR,
-                    lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal,
-                    lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblKersName, lblWearName]:
+        labels = [
+            lblSpeed, lblGForce, lblPressFL, lblPressFR, lblPressRL, lblPressRR,
+            lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal,
+            lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblKersName, lblWearName,
+            lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
+        ]
+        for lbl in labels:
             if lbl != 0:
                 ac.setFontColor(lbl, c[0], c[1], c[2], c[3])
     except Exception as e:
@@ -220,11 +232,12 @@ def applyTextColors():
 
 def updateScale(new_scale):
     global scale
-    global appShift, appTires, appSpeed, appPedals, appKers
+    global appShift, appTires, appSpeed, appPedals, appKers, appTimes
     global lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR
     global lblSpeed, lblSpeedLabel, lblGear, lblGearLabel, lblGForce
     global lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
     global lblKersName, lblWearName
+    global lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
 
     scale = new_scale
     
@@ -234,6 +247,7 @@ def updateScale(new_scale):
     ac.setSize(appSpeed, int(round(290 * scale)), int(round(125 * scale)))
     ac.setSize(appPedals, int(round(162 * scale)), int(round(70 * scale)))
     ac.setSize(appKers, int(round(162 * scale)), int(round(45 * scale)))
+    ac.setSize(appTimes, int(round(162 * scale)), int(round(70 * scale)))
 
     # 2. Update Tires label positions and fonts
     ac.setPosition(lblPressFL, int(round(15 * scale)), int(round(22 * scale)))
@@ -279,15 +293,45 @@ def updateScale(new_scale):
     ac.setPosition(lblKersName, int(round(12 * scale)), int(round(16 * scale)))
     ac.setFontSize(lblKersName, int(round(9 * scale)))
     ac.setPosition(lblWearName, int(round(90 * scale)), int(round(16 * scale)))
-    ac.setFontSize(lblWearName, int(round(90 * scale)))
+    ac.setFontSize(lblWearName, int(round(9 * scale)))
+
+    # 6. Update Times label positions and fonts
+    ac.setPosition(lblTimesCurrent, int(round(81 * scale)), int(round(22 * scale)))
+    ac.setFontSize(lblTimesCurrent, int(round(15 * scale)))
+    ac.setPosition(lblTimesBest, int(round(8 * scale)), int(round(5 * scale)))
+    ac.setFontSize(lblTimesBest, int(round(8 * scale)))
+    ac.setPosition(lblTimesLast, int(round(154 * scale)), int(round(5 * scale)))
+    ac.setFontSize(lblTimesLast, int(round(8 * scale)))
+    ac.setPosition(lblTimesLaps, int(round(81 * scale)), int(round(50 * scale)))
+    ac.setFontSize(lblTimesLaps, int(round(8 * scale)))
+
+def formatTime(ms):
+    if ms <= 0:
+        return "--:--.---"
+    seconds = int(ms / 1000)
+    milliseconds = int(ms % 1000)
+    minutes = int(seconds / 60)
+    seconds = int(seconds % 60)
+    return "{:d}:{:02d}.{:03d}".format(minutes, seconds, milliseconds)
+
+def formatTimeShort(ms):
+    if ms <= 0:
+        return "--:--.-"
+    seconds = int(ms / 1000)
+    milliseconds = int(ms % 1000)
+    minutes = int(seconds / 60)
+    seconds = int(seconds % 60)
+    tenths = int(milliseconds / 100)
+    return "{:d}:{:02d}.{:d}".format(minutes, seconds, tenths)
 
 def acMain(ac_version):
     global scale, lblDebugError, bg_color_idx, opacity_pct, text_color_idx
-    global appShift, appTires, appSpeed, appPedals, appKers, appSettings
+    global appShift, appTires, appSpeed, appPedals, appKers, appTimes, appSettings
     global lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR
     global lblSpeed, lblSpeedLabel, lblGear, lblGearLabel, lblGForce
     global lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
     global lblKersName, lblWearName
+    global lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
     global lblSliderName, sliderScale, lblOpacityName, sliderOpacity, lblBgColorName, sliderBgColor, lblTextColorName, sliderTextColor
     global last_spinner_value, last_opacity_value, last_bg_color_value, last_text_color_value
 
@@ -439,6 +483,36 @@ def acMain(ac_version):
         lblWearName = ac.addLabel(appKers, "WEAR")
         ac.setPosition(lblWearName, int(round(90 * scale)), int(round(16 * scale)))
         ac.setFontSize(lblWearName, int(round(9 * scale)))
+
+        # ---------------------------------------------
+        # 5b. APP: LAPS & TIMES (162px x 70px)
+        # ---------------------------------------------
+        appTimes = ac.newApp("AlaschgariHUD - Laps & Times")
+        ac.setSize(appTimes, int(round(162 * scale)), int(round(70 * scale)))
+        ac.setTitle(appTimes, "")
+        ac.drawBorder(appTimes, 0)
+        ac.setBackgroundOpacity(appTimes, 0.0)
+        ac.setIconPosition(appTimes, -10000, -10000)
+        ac.addRenderCallback(appTimes, drawTimesGL)
+
+        lblTimesCurrent = ac.addLabel(appTimes, "--:--.-")
+        ac.setPosition(lblTimesCurrent, int(round(81 * scale)), int(round(22 * scale)))
+        ac.setFontSize(lblTimesCurrent, int(round(15 * scale)))
+        ac.setFontAlignment(lblTimesCurrent, "center")
+
+        lblTimesBest = ac.addLabel(appTimes, "Best: --:--.---")
+        ac.setPosition(lblTimesBest, int(round(8 * scale)), int(round(5 * scale)))
+        ac.setFontSize(lblTimesBest, int(round(8 * scale)))
+
+        lblTimesLast = ac.addLabel(appTimes, "Last: --:--.---")
+        ac.setPosition(lblTimesLast, int(round(154 * scale)), int(round(5 * scale)))
+        ac.setFontSize(lblTimesLast, int(round(8 * scale)))
+        ac.setFontAlignment(lblTimesLast, "right")
+
+        lblTimesLaps = ac.addLabel(appTimes, "Lap 1")
+        ac.setPosition(lblTimesLaps, int(round(81 * scale)), int(round(50 * scale)))
+        ac.setFontSize(lblTimesLaps, int(round(8 * scale)))
+        ac.setFontAlignment(lblTimesLaps, "center")
 
         # Setup main debug label in tires app window as anchor
         lblDebugError = ac.addLabel(appTires, "")
@@ -616,7 +690,7 @@ def drawShiftGL(deltaT):
 def drawTiresGL(deltaT):
     global tireTemps, scale, show_chassis, show_tire_bars, brakeTemps
     try:
-        # Rounded Panel Background
+        # Rounded Panel Background (Height remains 112px inside 125px window)
         col_bg = getBGColor()
         drawRoundedRect(0, 0, int(round(310 * scale)), int(round(112 * scale)), int(round(6 * scale)), col_bg)
 
@@ -696,9 +770,9 @@ def drawSpeedGL(deltaT):
     global scale, speed, text_color_idx
     try:
         col_bg = getBGColor()
-        # Speedometer Box with rounded corners
+        # Speedometer Box with rounded corners (Height 112px inside 125px window)
         drawRoundedRect(0, 0, int(round(140 * scale)), int(round(112 * scale)), int(round(6 * scale)), col_bg)
-        # Gear / G-Force Box with rounded corners
+        # Gear / G-Force Box with rounded corners (Height 112px inside 125px window)
         drawRoundedRect(int(round(150 * scale)), 0, int(round(140 * scale)), int(round(112 * scale)), int(round(6 * scale)), col_bg)
 
         # Draw Speedometer Circular Gauge Track (0 to 300 KM/H)
@@ -776,11 +850,20 @@ def drawKersGL(deltaT):
     except Exception as e:
         log_error("drawKersGL failed:\n" + traceback.format_exc())
 
+def drawTimesGL(deltaT):
+    global scale
+    try:
+        col_bg = getBGColor()
+        drawRoundedRect(0, 0, int(round(162 * scale)), int(round(70 * scale)), int(round(6 * scale)), col_bg)
+    except Exception as e:
+        log_error("drawTimesGL failed:\n" + traceback.format_exc())
+
 def acUpdate(deltaT):
     global gear, speed, rpms, fuel, tireTemps, tirePressures, maxRpm, scale
     global lblGear, lblSpeed, lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR, lblGForce
     global clutchInput, brakeInput, throttleInput, kersCharge, tyreWear, brakeTemps, gForceLat, gForceLon
     global lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
+    global lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
     global last_spinner_value, sliderScale, lblSliderName
     global last_opacity_value, sliderOpacity, lblOpacityName, opacity_pct
     global last_bg_color_value, sliderBgColor, lblBgColorName, bg_color_idx
@@ -905,3 +988,17 @@ def acUpdate(deltaT):
             ac.setText(lblBrakeR, "{0:.0f}".format(brakeTemps[2]))
         except Exception as e:
             log_error("Brakes SM update failed:\n" + traceback.format_exc())
+
+    # 5. Update Laps & Times
+    try:
+        current_lap = ac.getCarState(0, acsys.CS.LapTime)
+        last_lap = ac.getCarState(0, acsys.CS.LastLap)
+        best_lap = ac.getCarState(0, acsys.CS.BestLap)
+        laps = ac.getCarState(0, acsys.CS.LapsCompleted)
+
+        ac.setText(lblTimesCurrent, formatTimeShort(current_lap))
+        ac.setText(lblTimesBest, "Best: " + formatTime(best_lap))
+        ac.setText(lblTimesLast, "Last: " + formatTime(last_lap))
+        ac.setText(lblTimesLaps, "Lap {}".format(laps + 1))
+    except Exception as e:
+        log_error("Times update failed:\n" + traceback.format_exc())
