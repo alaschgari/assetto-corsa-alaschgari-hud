@@ -696,7 +696,7 @@ def acUpdate(deltaT):
 
         # KERS & Wear
         try:
-            kersCharge = simInfo.physics.ersDelivery
+            kersCharge = simInfo.physics.kersCharge
             wear_sum = 0.0
             for i in range(4):
                 wear_sum += simInfo.physics.tyreWear[i]
