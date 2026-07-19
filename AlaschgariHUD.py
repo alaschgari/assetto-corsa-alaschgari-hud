@@ -394,9 +394,7 @@ def acMain(ac_version):
         ac.setFontSize(lblDebugError, int(8 * scale))
         ac.setFontColor(lblDebugError, 1.0, 0.2, 0.2, 1.0)
 
-        # ---------------------------------------------
-        # 6. APP: HUD IN-GAME CONFIG WINDOW
-        # ---------------------------------------------
+        # Config Window Setup
         appSettings = ac.newApp("AlaschgariHUD - Config")
         ac.setSize(appSettings, 250, 80)
         ac.setTitle(appSettings, "AlaschgariHUD Options")
@@ -413,6 +411,17 @@ def acMain(ac_version):
         ac.setValue(sliderScale, int(scale * 100))
         
         last_spinner_value = int(scale * 100)
+
+        # Check for early startup errors and display them
+        try:
+            path = os.path.join(os.path.dirname(__file__), 'error.log')
+            if os.path.exists(path):
+                with open(path, 'r') as f:
+                    err_lines = [l.strip() for l in f if l.strip()]
+                    if err_lines:
+                        ac.setText(lblDebugError, "START ERR: " + err_lines[-1][:65])
+        except:
+            pass
 
         # Max RPM default check from shared memory
         if simInfo is not None:
