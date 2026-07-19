@@ -426,7 +426,8 @@ def acMain(ac_version):
         ac.setFontColor(lblBrakeR, 1.0, 0.2, 0.2, 1.0)
 
         # Car Chassis Vector Overlay
-        imgChassis = ac.addImage(appTires, "apps/python/AlaschgariHUD/images/chassis_vector.png")
+        imgChassis = ac.addLabel(appTires, "")
+        ac.setBackgroundTexture(imgChassis, "apps/python/AlaschgariHUD/images/chassis_vector.png")
         ac.setPosition(imgChassis, int(round(110 * scale)), int(round(10 * scale)))
         ac.setSize(imgChassis, int(round(90 * scale)), int(round(90 * scale)))
 
@@ -480,15 +481,18 @@ def acMain(ac_version):
         ac.addRenderCallback(appPedals, drawPedalsGL)
 
         # Pedal Custom Vector Icons (transparents)
-        imgPedalClutch = ac.addImage(appPedals, "apps/python/AlaschgariHUD/images/pedal_brake.png")
+        imgPedalClutch = ac.addLabel(appPedals, "")
+        ac.setBackgroundTexture(imgPedalClutch, "apps/python/AlaschgariHUD/images/pedal_brake.png")
         ac.setPosition(imgPedalClutch, int(round(12 * scale)), int(round(6 * scale)))
         ac.setSize(imgPedalClutch, int(round(14 * scale)), int(round(14 * scale)))
 
-        imgPedalBrake = ac.addImage(appPedals, "apps/python/AlaschgariHUD/images/pedal_brake.png")
+        imgPedalBrake = ac.addLabel(appPedals, "")
+        ac.setBackgroundTexture(imgPedalBrake, "apps/python/AlaschgariHUD/images/pedal_brake.png")
         ac.setPosition(imgPedalBrake, int(round(12 * scale)), int(round(24 * scale)))
         ac.setSize(imgPedalBrake, int(round(14 * scale)), int(round(14 * scale)))
 
-        imgPedalThrottle = ac.addImage(appPedals, "apps/python/AlaschgariHUD/images/pedal_throttle.png")
+        imgPedalThrottle = ac.addLabel(appPedals, "")
+        ac.setBackgroundTexture(imgPedalThrottle, "apps/python/AlaschgariHUD/images/pedal_throttle.png")
         ac.setPosition(imgPedalThrottle, int(round(12 * scale)), int(round(42 * scale)))
         ac.setSize(imgPedalThrottle, int(round(14 * scale)), int(round(14 * scale)))
 
@@ -519,11 +523,13 @@ def acMain(ac_version):
         ac.addRenderCallback(appKers, drawKersGL)
 
         # KERS & Wear Vector Icons (transparents)
-        imgKers = ac.addImage(appKers, "apps/python/AlaschgariHUD/images/kers_icon.png")
+        imgKers = ac.addLabel(appKers, "")
+        ac.setBackgroundTexture(imgKers, "apps/python/AlaschgariHUD/images/kers_icon.png")
         ac.setPosition(imgKers, int(round(12 * scale)), int(round(12 * scale)))
         ac.setSize(imgKers, int(round(20 * scale)), int(round(20 * scale)))
 
-        imgWear = ac.addImage(appKers, "apps/python/AlaschgariHUD/images/wear_icon.png")
+        imgWear = ac.addLabel(appKers, "")
+        ac.setBackgroundTexture(imgWear, "apps/python/AlaschgariHUD/images/wear_icon.png")
         ac.setPosition(imgWear, int(round(96 * scale)), int(round(12 * scale)))
         ac.setSize(imgWear, int(round(20 * scale)), int(round(20 * scale)))
 
