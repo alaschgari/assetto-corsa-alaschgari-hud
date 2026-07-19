@@ -88,6 +88,7 @@ appSpeed = 0
 appPedals = 0
 appKers = 0
 appTimes = 0
+appFuel = 0
 appSettings = 0
 
 # UI Controls per app window
@@ -124,6 +125,12 @@ lblTimesBest = 0
 lblTimesLast = 0
 lblTimesLaps = 0
 
+# Fuel App
+lblFuelCurrent = 0
+lblFuelCons = 0
+lblFuelEst = 0
+lblFuelTemps = 0
+
 # Settings App
 lblSliderName = 0
 sliderScale = 0
@@ -149,6 +156,12 @@ gForceLat = 0.0
 gForceLon = 0.0
 kersCharge = 1.0
 tyreWear = 0.0
+
+# Fuel Calculator State
+last_lap_completed = -1
+fuel_at_lap_start = -1.0
+fuel_consumptions = []
+fuel_per_lap_avg = 0.0
 
 # Settings tracker variables
 last_spinner_value = 100.0
@@ -215,6 +228,7 @@ def applyTextColors():
     global lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal, lblKersName, lblWearName
     global lblPedalClutch, lblPedalBrake, lblPedalThrottle
     global lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
+    global lblFuelCurrent, lblFuelCons, lblFuelEst, lblFuelTemps
     
     try:
         c = TEXT_COLORS[text_color_idx]
@@ -222,7 +236,8 @@ def applyTextColors():
             lblSpeed, lblGForce, lblPressFL, lblPressFR, lblPressRL, lblPressRR,
             lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal,
             lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblKersName, lblWearName,
-            lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
+            lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps,
+            lblFuelCurrent, lblFuelCons, lblFuelEst, lblFuelTemps
         ]
         for lbl in labels:
             if lbl != 0:
@@ -232,12 +247,13 @@ def applyTextColors():
 
 def updateScale(new_scale):
     global scale
-    global appShift, appTires, appSpeed, appPedals, appKers, appTimes
+    global appShift, appTires, appSpeed, appPedals, appKers, appTimes, appFuel
     global lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR
     global lblSpeed, lblSpeedLabel, lblGear, lblGearLabel, lblGForce
     global lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
     global lblKersName, lblWearName
     global lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
+    global lblFuelCurrent, lblFuelCons, lblFuelEst, lblFuelTemps
 
     scale = new_scale
     
@@ -248,6 +264,7 @@ def updateScale(new_scale):
     ac.setSize(appPedals, int(round(162 * scale)), int(round(70 * scale)))
     ac.setSize(appKers, int(round(162 * scale)), int(round(45 * scale)))
     ac.setSize(appTimes, int(round(162 * scale)), int(round(70 * scale)))
+    ac.setSize(appFuel, int(round(162 * scale)), int(round(70 * scale)))
 
     # 2. Update Tires label positions and fonts
     ac.setPosition(lblPressFL, int(round(15 * scale)), int(round(22 * scale)))
@@ -305,6 +322,16 @@ def updateScale(new_scale):
     ac.setPosition(lblTimesLaps, int(round(81 * scale)), int(round(50 * scale)))
     ac.setFontSize(lblTimesLaps, int(round(8 * scale)))
 
+    # 7. Update Fuel label positions and fonts
+    ac.setPosition(lblFuelCurrent, int(round(81 * scale)), int(round(22 * scale)))
+    ac.setFontSize(lblFuelCurrent, int(round(14 * scale)))
+    ac.setPosition(lblFuelCons, int(round(8 * scale)), int(round(5 * scale)))
+    ac.setFontSize(lblFuelCons, int(round(8 * scale)))
+    ac.setPosition(lblFuelEst, int(round(154 * scale)), int(round(5 * scale)))
+    ac.setFontSize(lblFuelEst, int(round(8 * scale)))
+    ac.setPosition(lblFuelTemps, int(round(81 * scale)), int(round(50 * scale)))
+    ac.setFontSize(lblFuelTemps, int(round(8 * scale)))
+
 def formatTime(ms):
     if ms <= 0:
         return "--:--.---"
@@ -326,12 +353,13 @@ def formatTimeShort(ms):
 
 def acMain(ac_version):
     global scale, lblDebugError, bg_color_idx, opacity_pct, text_color_idx
-    global appShift, appTires, appSpeed, appPedals, appKers, appTimes, appSettings
+    global appShift, appTires, appSpeed, appPedals, appKers, appTimes, appFuel, appSettings
     global lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR
     global lblSpeed, lblSpeedLabel, lblGear, lblGearLabel, lblGForce
     global lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
     global lblKersName, lblWearName
     global lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
+    global lblFuelCurrent, lblFuelCons, lblFuelEst, lblFuelTemps
     global lblSliderName, sliderScale, lblOpacityName, sliderOpacity, lblBgColorName, sliderBgColor, lblTextColorName, sliderTextColor
     global last_spinner_value, last_opacity_value, last_bg_color_value, last_text_color_value
 
@@ -513,6 +541,36 @@ def acMain(ac_version):
         ac.setPosition(lblTimesLaps, int(round(81 * scale)), int(round(50 * scale)))
         ac.setFontSize(lblTimesLaps, int(round(8 * scale)))
         ac.setFontAlignment(lblTimesLaps, "center")
+
+        # ---------------------------------------------
+        # 5c. APP: FUEL CALCULATOR (162px x 70px)
+        # ---------------------------------------------
+        appFuel = ac.newApp("AlaschgariHUD - Fuel Calculator")
+        ac.setSize(appFuel, int(round(162 * scale)), int(round(70 * scale)))
+        ac.setTitle(appFuel, "")
+        ac.drawBorder(appFuel, 0)
+        ac.setBackgroundOpacity(appFuel, 0.0)
+        ac.setIconPosition(appFuel, -10000, -10000)
+        ac.addRenderCallback(appFuel, drawFuelGL)
+
+        lblFuelCurrent = ac.addLabel(appFuel, "0.0 L")
+        ac.setPosition(lblFuelCurrent, int(round(81 * scale)), int(round(22 * scale)))
+        ac.setFontSize(lblFuelCurrent, int(round(14 * scale)))
+        ac.setFontAlignment(lblFuelCurrent, "center")
+
+        lblFuelCons = ac.addLabel(appFuel, "Cons: -- L")
+        ac.setPosition(lblFuelCons, int(round(8 * scale)), int(round(5 * scale)))
+        ac.setFontSize(lblFuelCons, int(round(8 * scale)))
+
+        lblFuelEst = ac.addLabel(appFuel, "Est: -- Laps")
+        ac.setPosition(lblFuelEst, int(round(154 * scale)), int(round(5 * scale)))
+        ac.setFontSize(lblFuelEst, int(round(8 * scale)))
+        ac.setFontAlignment(lblFuelEst, "right")
+
+        lblFuelTemps = ac.addLabel(appFuel, "T: 0 C | A: 0 C")
+        ac.setPosition(lblFuelTemps, int(round(81 * scale)), int(round(50 * scale)))
+        ac.setFontSize(lblFuelTemps, int(round(8 * scale)))
+        ac.setFontAlignment(lblFuelTemps, "center")
 
         # Setup main debug label in tires app window as anchor
         lblDebugError = ac.addLabel(appTires, "")
@@ -858,12 +916,22 @@ def drawTimesGL(deltaT):
     except Exception as e:
         log_error("drawTimesGL failed:\n" + traceback.format_exc())
 
+def drawFuelGL(deltaT):
+    global scale
+    try:
+        col_bg = getBGColor()
+        drawRoundedRect(0, 0, int(round(162 * scale)), int(round(70 * scale)), int(round(6 * scale)), col_bg)
+    except Exception as e:
+        log_error("drawFuelGL failed:\n" + traceback.format_exc())
+
 def acUpdate(deltaT):
     global gear, speed, rpms, fuel, tireTemps, tirePressures, maxRpm, scale
     global lblGear, lblSpeed, lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR, lblGForce
     global clutchInput, brakeInput, throttleInput, kersCharge, tyreWear, brakeTemps, gForceLat, gForceLon
     global lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
     global lblTimesCurrent, lblTimesBest, lblTimesLast, lblTimesLaps
+    global lblFuelCurrent, lblFuelCons, lblFuelEst, lblFuelTemps
+    global last_lap_completed, fuel_at_lap_start, fuel_consumptions, fuel_per_lap_avg
     global last_spinner_value, sliderScale, lblSliderName
     global last_opacity_value, sliderOpacity, lblOpacityName, opacity_pct
     global last_bg_color_value, sliderBgColor, lblBgColorName, bg_color_idx
@@ -1002,3 +1070,43 @@ def acUpdate(deltaT):
         ac.setText(lblTimesLaps, "Lap {}".format(laps + 1))
     except Exception as e:
         log_error("Times update failed:\n" + traceback.format_exc())
+
+    # 6. Update Fuel & Environment temperatures
+    if simInfo is not None:
+        try:
+            laps = ac.getCarState(0, acsys.CS.LapsCompleted)
+            current_fuel = simInfo.physics.fuel
+            
+            # Fuel consumption math
+            if fuel_at_lap_start < 0.0:
+                fuel_at_lap_start = current_fuel
+                last_lap_completed = laps
+            
+            if laps > last_lap_completed:
+                consumed = fuel_at_lap_start - current_fuel
+                if 0.1 < consumed < 20.0:
+                    fuel_consumptions.append(consumed)
+                    if len(fuel_consumptions) > 5:
+                        fuel_consumptions.pop(0)
+                    fuel_per_lap_avg = sum(fuel_consumptions) / len(fuel_consumptions)
+                fuel_at_lap_start = current_fuel
+                last_lap_completed = laps
+
+            # Show Fuel Current
+            ac.setText(lblFuelCurrent, "{0:.1f} L".format(current_fuel))
+
+            # Show Fuel Consumption
+            if fuel_per_lap_avg > 0.0:
+                ac.setText(lblFuelCons, "Cons: {0:.2f} L/L".format(fuel_per_lap_avg))
+                ac.setText(lblFuelEst, "Est: {0:.1f} Laps".format(current_fuel / fuel_per_lap_avg))
+            else:
+                ac.setText(lblFuelCons, "Cons: -- L/L")
+                ac.setText(lblFuelEst, "Est: -- Laps")
+
+            # Show Air & Road Temps
+            air_t = simInfo.physics.airTemp
+            road_t = simInfo.physics.roadTemp
+            ac.setText(lblFuelTemps, "Track: {0:.0f} C | Air: {1:.0f} C".format(road_t, air_t))
+
+        except Exception as e:
+            log_error("Fuel/Temps update failed:\n" + traceback.format_exc())
