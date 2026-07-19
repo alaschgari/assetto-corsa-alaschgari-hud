@@ -711,6 +711,48 @@ def acMain(ac_version):
         loadConfig()
 
         # ---------------------------------------------
+        # 0. APP: MAIN CONFIG WINDOW (must be FIRST for CM registration)
+        # ---------------------------------------------
+        appSettings = ac.newApp("AlaschgariHUD")
+        ac.setSize(appSettings, 320, 510)
+        ac.setTitle(appSettings, "AlaschgariHUD Options")
+
+        # Row layout generator
+        def addConfigRow(name, minVal, maxVal, stepVal, startVal, y_pos):
+            lbl = ac.addLabel(appSettings, name + ": {0}%".format(startVal))
+            ac.setPosition(lbl, 10, y_pos)
+            ac.setFontSize(lbl, 8)
+
+            sp = ac.addSpinner(appSettings, "")
+            ac.setPosition(sp, 190, y_pos - 2)
+            ac.setSize(sp, 110, 16)
+            ac.setRange(sp, minVal, maxVal)
+            ac.setStep(sp, stepVal)
+            ac.setValue(sp, startVal)
+            return lbl, sp
+
+        y = 30
+
+        # General Styles
+        lblOpacityName, sliderOpacity = addConfigRow("HUD Opacity", 10, 100, 10, opacity_pct, y); y += 35
+        lblBgColorName, sliderBgColor = addConfigRow("BG Theme (0-3)", 0, 3, 1, bg_color_idx, y); y += 35
+        lblTextColorName, sliderTextColor = addConfigRow("Text Theme (0-4)", 0, 4, 1, text_color_idx, y); y += 35
+
+        # Widget Scale settings
+        _, sliderScaleShift = addConfigRow("Scale: Shift Lights", 50, 150, 5, int(scale_shift * 100), y); y += 30
+        _, sliderScaleTires = addConfigRow("Scale: Tires Status", 50, 150, 5, int(scale_tires * 100), y); y += 30
+        _, sliderScaleSpeed = addConfigRow("Scale: Speedometer", 50, 150, 5, int(scale_speed * 100), y); y += 30
+        _, sliderScaleGear = addConfigRow("Scale: Gear Box", 50, 150, 5, int(scale_gear * 100), y); y += 30
+        _, sliderScalePedals = addConfigRow("Scale: Pedals Input", 50, 150, 5, int(scale_pedals * 100), y); y += 30
+        _, sliderScaleKers = addConfigRow("Scale: KERS & Wear", 50, 150, 5, int(scale_kers * 100), y); y += 30
+        _, sliderScaleTimes = addConfigRow("Scale: Laps & Times", 50, 150, 5, int(scale_times * 100), y); y += 30
+        _, sliderScaleFuel = addConfigRow("Scale: Fuel Calc", 50, 150, 5, int(scale_fuel * 100), y); y += 30
+        _, sliderScalePerf = addConfigRow("Scale: Performance", 50, 150, 5, int(scale_perf * 100), y); y += 30
+        _, sliderScaleDamage = addConfigRow("Scale: Damages", 50, 150, 5, int(scale_damage * 100), y); y += 30
+        _, sliderScaleTrack = addConfigRow("Scale: Track Wind", 50, 150, 5, int(scale_track * 100), y); y += 30
+        _, sliderScaleDebug = addConfigRow("Scale: Debug Console", 50, 150, 5, int(scale_debug * 100), y)
+
+        # ---------------------------------------------
         # 1. APP: SHIFT LIGHT BAR (480px x 20px)
         # ---------------------------------------------
         appShift = ac.newApp("AlaschgariHUD - Shift Lights")
@@ -1090,47 +1132,6 @@ def acMain(ac_version):
         updateScaleTrack(scale_track)
         updateScaleDebug(scale_debug)
 
-        # ---------------------------------------------
-        # 6. APP: HUD IN-GAME CONFIG WINDOW
-        # ---------------------------------------------
-        appSettings = ac.newApp("AlaschgariHUD")
-        ac.setSize(appSettings, 320, 510)
-        ac.setTitle(appSettings, "AlaschgariHUD Options")
-        
-        # Row layout generator
-        def addConfigRow(name, minVal, maxVal, stepVal, startVal, y_pos):
-            lbl = ac.addLabel(appSettings, name + ": {0}%".format(startVal))
-            ac.setPosition(lbl, 10, y_pos)
-            ac.setFontSize(lbl, 8)
-
-            sp = ac.addSpinner(appSettings, "")
-            ac.setPosition(sp, 190, y_pos - 2)
-            ac.setSize(sp, 110, 16)
-            ac.setRange(sp, minVal, maxVal)
-            ac.setStep(sp, stepVal)
-            ac.setValue(sp, startVal)
-            return lbl, sp
-
-        y = 30
-        
-        # General Styles (Config labels can stay standard sized for interface clarity)
-        lblOpacityName, sliderOpacity = addConfigRow("HUD Opacity", 10, 100, 10, opacity_pct, y); y += 35
-        lblBgColorName, sliderBgColor = addConfigRow("BG Theme (0-3)", 0, 3, 1, bg_color_idx, y); y += 35
-        lblTextColorName, sliderTextColor = addConfigRow("Text Theme (0-4)", 0, 4, 1, text_color_idx, y); y += 35
-        
-        # Widget Scale settings
-        _, sliderScaleShift = addConfigRow("Scale: Shift Lights", 50, 150, 5, int(scale_shift * 100), y); y += 30
-        _, sliderScaleTires = addConfigRow("Scale: Tires Status", 50, 150, 5, int(scale_tires * 100), y); y += 30
-        _, sliderScaleSpeed = addConfigRow("Scale: Speedometer", 50, 150, 5, int(scale_speed * 100), y); y += 30
-        _, sliderScaleGear = addConfigRow("Scale: Gear Box", 50, 150, 5, int(scale_gear * 100), y); y += 30
-        _, sliderScalePedals = addConfigRow("Scale: Pedals Input", 50, 150, 5, int(scale_pedals * 100), y); y += 30
-        _, sliderScaleKers = addConfigRow("Scale: KERS & Wear", 50, 150, 5, int(scale_kers * 100), y); y += 30
-        _, sliderScaleTimes = addConfigRow("Scale: Laps & Times", 50, 150, 5, int(scale_times * 100), y); y += 30
-        _, sliderScaleFuel = addConfigRow("Scale: Fuel Calc", 50, 150, 5, int(scale_fuel * 100), y); y += 30
-        _, sliderScalePerf = addConfigRow("Scale: Performance", 50, 150, 5, int(scale_perf * 100), y); y += 30
-        _, sliderScaleDamage = addConfigRow("Scale: Damages", 50, 150, 5, int(scale_damage * 100), y); y += 30
-        _, sliderScaleTrack = addConfigRow("Scale: Track Wind", 50, 150, 5, int(scale_track * 100), y); y += 30
-        _, sliderScaleDebug = addConfigRow("Scale: Debug Console", 50, 150, 5, int(scale_debug * 100), y)
 
         # Apply starting custom text colors
         applyTextColors()
