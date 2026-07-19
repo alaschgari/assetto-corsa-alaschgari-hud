@@ -1062,7 +1062,10 @@ def acUpdate(deltaT):
         current_lap = ac.getCarState(0, acsys.CS.LapTime)
         last_lap = ac.getCarState(0, acsys.CS.LastLap)
         best_lap = ac.getCarState(0, acsys.CS.BestLap)
-        laps = ac.getCarState(0, acsys.CS.LapsCompleted)
+        
+        laps = 0
+        if simInfo is not None:
+            laps = simInfo.graphics.completedLaps
 
         ac.setText(lblTimesCurrent, formatTimeShort(current_lap))
         ac.setText(lblTimesBest, "Best: " + formatTime(best_lap))
@@ -1074,7 +1077,7 @@ def acUpdate(deltaT):
     # 6. Update Fuel & Environment temperatures
     if simInfo is not None:
         try:
-            laps = ac.getCarState(0, acsys.CS.LapsCompleted)
+            laps = simInfo.graphics.completedLaps
             current_fuel = simInfo.physics.fuel
             
             # Fuel consumption math
