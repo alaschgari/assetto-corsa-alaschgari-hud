@@ -1093,7 +1093,7 @@ def acMain(ac_version):
         # ---------------------------------------------
         # 6. APP: HUD IN-GAME CONFIG WINDOW
         # ---------------------------------------------
-        appSettings = ac.newApp("AlaschgariHUD - Config")
+        appSettings = ac.newApp("AlaschgariHUD")
         ac.setSize(appSettings, 320, 510)
         ac.setTitle(appSettings, "AlaschgariHUD Options")
         
