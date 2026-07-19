@@ -244,6 +244,19 @@ def applyTextColors():
     except Exception as e:
         log_error("applyTextColors failed:\n" + traceback.format_exc())
 
+def updateWindowsBackground():
+    global appTires, appSpeed, appPedals, appKers, appTimes, appFuel
+    global bg_color_idx, opacity_pct
+    try:
+        c = BG_COLORS[bg_color_idx]
+        op = opacity_pct / 100.0
+        for app in [appTires, appSpeed, appPedals, appKers, appTimes, appFuel]:
+            if app != 0:
+                ac.setBackgroundColor(app, c[0], c[1], c[2])
+                ac.setBackgroundOpacity(app, op)
+    except Exception as e:
+        log_error("updateWindowsBackground failed:\n" + traceback.format_exc())
+
 def updateScale(new_scale):
     global scale
     global appShift, appTires, appSpeed, appPedals, appKers, appTimes, appFuel
@@ -392,7 +405,6 @@ def acMain(ac_version):
         ac.setSize(appTires, int(round(310 * scale)), int(round(125 * scale)))
         ac.setTitle(appTires, "")
         ac.drawBorder(appTires, 0)
-        ac.setBackgroundOpacity(appTires, 0.0)
         ac.setIconPosition(appTires, -10000, -10000)
         ac.addRenderCallback(appTires, drawTiresGL)
 
@@ -438,7 +450,6 @@ def acMain(ac_version):
         ac.setSize(appSpeed, int(round(290 * scale)), int(round(125 * scale)))
         ac.setTitle(appSpeed, "")
         ac.drawBorder(appSpeed, 0)
-        ac.setBackgroundOpacity(appSpeed, 0.0)
         ac.setIconPosition(appSpeed, -10000, -10000)
         ac.addRenderCallback(appSpeed, drawSpeedGL)
 
@@ -476,7 +487,6 @@ def acMain(ac_version):
         ac.setSize(appPedals, int(round(162 * scale)), int(round(70 * scale)))
         ac.setTitle(appPedals, "")
         ac.drawBorder(appPedals, 0)
-        ac.setBackgroundOpacity(appPedals, 0.0)
         ac.setIconPosition(appPedals, -10000, -10000)
         ac.addRenderCallback(appPedals, drawPedalsGL)
 
@@ -518,7 +528,6 @@ def acMain(ac_version):
         ac.setSize(appKers, int(round(162 * scale)), int(round(45 * scale)))
         ac.setTitle(appKers, "")
         ac.drawBorder(appKers, 0)
-        ac.setBackgroundOpacity(appKers, 0.0)
         ac.setIconPosition(appKers, -10000, -10000)
         ac.addRenderCallback(appKers, drawKersGL)
 
@@ -540,7 +549,6 @@ def acMain(ac_version):
         ac.setSize(appTimes, int(round(162 * scale)), int(round(70 * scale)))
         ac.setTitle(appTimes, "")
         ac.drawBorder(appTimes, 0)
-        ac.setBackgroundOpacity(appTimes, 0.0)
         ac.setIconPosition(appTimes, -10000, -10000)
         ac.addRenderCallback(appTimes, drawTimesGL)
 
@@ -570,7 +578,6 @@ def acMain(ac_version):
         ac.setSize(appFuel, int(round(162 * scale)), int(round(70 * scale)))
         ac.setTitle(appFuel, "")
         ac.drawBorder(appFuel, 0)
-        ac.setBackgroundOpacity(appFuel, 0.0)
         ac.setIconPosition(appFuel, -10000, -10000)
         ac.addRenderCallback(appFuel, drawFuelGL)
 
@@ -598,6 +605,9 @@ def acMain(ac_version):
         ac.setPosition(lblDebugError, int(round(10 * scale)), int(round(115 * scale)))
         ac.setFontSize(lblDebugError, int(round(8 * scale)))
         ac.setFontColor(lblDebugError, 1.0, 0.2, 0.2, 1.0)
+
+        # Apply starting backgrounds and opacities nativly
+        updateWindowsBackground()
 
         # ---------------------------------------------
         # 6. APP: HUD IN-GAME CONFIG WINDOW (180px height for multi options)
@@ -719,12 +729,6 @@ def drawRoundedRect(x, y, w, h, r, color):
         # Bottom-Right
         ac.glQuad(x + w - r + dx, y + h - r, 1, dy)
 
-# Get current background color matching theme & opacity index
-def getBGColor():
-    c = BG_COLORS[bg_color_idx]
-    op = opacity_pct / 100.0
-    return [c[0], c[1], c[2], op]
-
 # -------------------------------------------------------------
 # INDIVIDUAL OPENGL RENDER CALLBACKS FOR FLOATING WINDOWS
 # -------------------------------------------------------------
@@ -769,10 +773,6 @@ def drawShiftGL(deltaT):
 def drawTiresGL(deltaT):
     global tireTemps, scale, show_chassis, show_tire_bars, brakeTemps
     try:
-        # Rounded Panel Background (Height remains 112px inside 125px window)
-        col_bg = getBGColor()
-        drawRoundedRect(0, 0, int(round(310 * scale)), int(round(112 * scale)), int(round(6 * scale)), col_bg)
-
         # Tires (FL, FR, RL, RR)
         # FL
         col = getTireColor(tireTemps[0])
@@ -839,12 +839,6 @@ def drawTiresGL(deltaT):
 def drawSpeedGL(deltaT):
     global scale, speed, text_color_idx
     try:
-        col_bg = getBGColor()
-        # Speedometer Box with rounded corners (Height 112px inside 125px window)
-        drawRoundedRect(0, 0, int(round(140 * scale)), int(round(112 * scale)), int(round(6 * scale)), col_bg)
-        # Gear / G-Force Box with rounded corners (Height 112px inside 125px window)
-        drawRoundedRect(int(round(150 * scale)), 0, int(round(140 * scale)), int(round(112 * scale)), int(round(6 * scale)), col_bg)
-
         # Draw Speedometer Circular Gauge Track (0 to 300 KM/H)
         ac.glColor4f(0.15, 0.15, 0.15, 0.8)
         cx, cy = 70.0, 48.0
@@ -873,9 +867,6 @@ def drawSpeedGL(deltaT):
 def drawPedalsGL(deltaT):
     global scale, clutchInput, brakeInput, throttleInput
     try:
-        col_bg = getBGColor()
-        drawRoundedRect(0, 0, int(round(162 * scale)), int(round(70 * scale)), int(round(6 * scale)), col_bg)
-
         # Fills backgrounds
         ac.glColor4f(0.05, 0.05, 0.05, 0.9)
         ac.glQuad(int(round(50 * scale)), int(round(7 * scale)), int(round(65 * scale)), int(round(8 * scale)))
@@ -899,12 +890,6 @@ def drawPedalsGL(deltaT):
 def drawKersGL(deltaT):
     global scale, kersCharge, tyreWear
     try:
-        col_bg = getBGColor()
-        # Kers Box
-        drawRoundedRect(0, 0, int(round(76 * scale)), int(round(45 * scale)), int(round(4 * scale)), col_bg)
-        # Wear Box
-        drawRoundedRect(int(round(86 * scale)), 0, int(round(76 * scale)), int(round(45 * scale)), int(round(4 * scale)), col_bg)
-
         # Kers Inner Bar
         ac.glColor4f(0.05, 0.05, 0.05, 0.9)
         ac.glQuad(int(round(56 * scale)), int(round(4 * scale)), int(round(8 * scale)), int(round(37 * scale)))
@@ -921,20 +906,10 @@ def drawKersGL(deltaT):
         log_error("drawKersGL failed:\n" + traceback.format_exc())
 
 def drawTimesGL(deltaT):
-    global scale
-    try:
-        col_bg = getBGColor()
-        drawRoundedRect(0, 0, int(round(162 * scale)), int(round(70 * scale)), int(round(6 * scale)), col_bg)
-    except Exception as e:
-        log_error("drawTimesGL failed:\n" + traceback.format_exc())
+    pass
 
 def drawFuelGL(deltaT):
-    global scale
-    try:
-        col_bg = getBGColor()
-        drawRoundedRect(0, 0, int(round(162 * scale)), int(round(70 * scale)), int(round(6 * scale)), col_bg)
-    except Exception as e:
-        log_error("drawFuelGL failed:\n" + traceback.format_exc())
+    pass
 
 def acUpdate(deltaT):
     global gear, speed, rpms, fuel, tireTemps, tirePressures, maxRpm, scale
@@ -967,6 +942,7 @@ def acUpdate(deltaT):
                 last_opacity_value = current_op
                 opacity_pct = current_op
                 ac.setText(lblOpacityName, "HUD Opacity: {0}%".format(current_op))
+                updateWindowsBackground()
                 saveConfig()
 
         # BG Color Theme
@@ -976,6 +952,7 @@ def acUpdate(deltaT):
                 last_bg_color_value = current_bg
                 bg_color_idx = current_bg
                 ac.setText(lblBgColorName, "BG Color (0-3): {0}".format(current_bg))
+                updateWindowsBackground()
                 saveConfig()
 
         # Text Color Theme
