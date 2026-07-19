@@ -106,9 +106,16 @@ scale_debug = 1.0
 show_rpm = True
 show_chassis = True
 show_tire_bars = True
+show_pedal_graph = True
 bg_color_idx = 0
 opacity_pct = 65
 text_color_idx = 0
+
+# Pedal history buffers for the telemetry graph
+pedalHistoryThrottle = []
+pedalHistoryBrake = []
+pedalHistoryClutch = []
+maxPedalHistory = 140
 
 # App Windows
 appShift = 0
@@ -317,6 +324,7 @@ def loadConfig():
                         elif k == 'show_rpm': show_rpm = (v.lower() == 'true')
                         elif k == 'show_chassis': show_chassis = (v.lower() == 'true')
                         elif k == 'show_tire_bars': show_tire_bars = (v.lower() == 'true')
+                        elif k == 'show_pedal_graph': show_pedal_graph = (v.lower() == 'true')
                         elif k == 'bg_color_idx':
                             try: bg_color_idx = int(v)
                             except: bg_color_idx = 0
@@ -350,7 +358,8 @@ def saveConfig():
             f.write("[WIDGETS_VISIBILITY]\n")
             f.write("show_chassis = " + str(show_chassis) + "\n")
             f.write("show_rpm = " + str(show_rpm) + "\n")
-            f.write("show_tire_bars = " + str(show_tire_bars) + "\n\n")
+            f.write("show_tire_bars = " + str(show_tire_bars) + "\n")
+            f.write("show_pedal_graph = " + str(show_pedal_graph) + "\n\n")
             
             f.write("[HUD_STYLE]\n")
             f.write("bg_color_idx = " + str(bg_color_idx) + "\n")
@@ -473,8 +482,10 @@ def updateScaleGear(s):
 def updateScalePedals(s):
     global scale_pedals, btnScalePedals
     global appPedals, imgPedalClutch, imgPedalBrake, imgPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
+    global show_pedal_graph
     scale_pedals = s
-    ac.setSize(appPedals, int(round(240 * scale_pedals)), int(round(80 * scale_pedals)))
+    width = 400 * scale_pedals if show_pedal_graph else 240 * scale_pedals
+    ac.setSize(appPedals, int(round(width)), int(round(80 * scale_pedals)))
     if imgPedalClutch != 0:
         ac.setPosition(imgPedalClutch, int(round(25 * scale_pedals)), int(round(12 * scale_pedals)))
         ac.setSize(imgPedalClutch, int(round(18 * scale_pedals)), int(round(18 * scale_pedals)))
@@ -1492,8 +1503,10 @@ def drawSpeedGL(deltaT):
 
 def drawPedalsGL(deltaT):
     global scale_pedals, clutchInput, brakeInput, throttleInput, appPedals
+    global show_pedal_graph, pedalHistoryThrottle, pedalHistoryBrake, pedalHistoryClutch, maxPedalHistory
     try:
-        drawBorderAndCornersGL(appPedals, 240 * scale_pedals, 80 * scale_pedals, scale_pedals)
+        width = 400 * scale_pedals if show_pedal_graph else 240 * scale_pedals
+        drawBorderAndCornersGL(appPedals, width, 80 * scale_pedals, scale_pedals)
         # Fills backgrounds
         ac.glColor4f(0.05, 0.05, 0.05, 0.9)
         ac.glQuad(int(round(55 * scale_pedals)), int(round(18 * scale_pedals)), int(round(120 * scale_pedals)), int(round(8 * scale_pedals)))
@@ -1511,6 +1524,63 @@ def drawPedalsGL(deltaT):
         # Fill: Throttle
         ac.glColor4f(0.0, 1.0, 0.4, 0.9)
         ac.glQuad(int(round(55 * scale_pedals)), int(round(62 * scale_pedals)), int(round(120 * throttleInput * scale_pedals)), int(round(8 * scale_pedals)))
+
+        if show_pedal_graph and len(pedalHistoryThrottle) > 0:
+            graph_left = 245 * scale_pedals
+            graph_top = 10 * scale_pedals
+            graph_bottom = 70 * scale_pedals
+            graph_height = 60 * scale_pedals
+            graph_width = 135 * scale_pedals
+
+            # Graph background box
+            ac.glColor4f(0.02, 0.02, 0.02, 0.7)
+            ac.glQuad(int(round(graph_left)), int(round(graph_top)), int(round(graph_width)), int(round(graph_height)))
+            # Graph border
+            ac.glColor4f(0.15, 0.15, 0.15, 0.8)
+            # Top
+            ac.glQuad(int(round(graph_left)), int(round(graph_top)), int(round(graph_width)), 1)
+            # Bottom
+            ac.glQuad(int(round(graph_left)), int(round(graph_bottom)), int(round(graph_width)), 1)
+            # Left
+            ac.glQuad(int(round(graph_left)), int(round(graph_top)), 1, int(round(graph_height)))
+            # Right
+            ac.glQuad(int(round(graph_left + graph_width)), int(round(graph_top)), 1, int(round(graph_height)))
+
+            # Draw historical telemetry curves
+            h_len = len(pedalHistoryThrottle)
+            w_step = float(graph_width) / maxPedalHistory
+            
+            for i in range(h_len):
+                x = int(round(graph_left + i * w_step))
+                w = int(round(w_step))
+                if w < 1: w = 1
+
+                # Clutch (Blue)
+                c_val = pedalHistoryClutch[i]
+                c_h = int(round(c_val * graph_height))
+                if c_h > 0:
+                    ac.glColor4f(0.0, 0.5, 1.0, 0.25)
+                    ac.glQuad(x, int(round(graph_bottom - c_h)), w, c_h)
+                    ac.glColor4f(0.0, 0.5, 1.0, 0.9)
+                    ac.glQuad(x, int(round(graph_bottom - c_h)), w, int(round(2 * scale_pedals)))
+
+                # Brake (Red)
+                b_val = pedalHistoryBrake[i]
+                b_h = int(round(b_val * graph_height))
+                if b_h > 0:
+                    ac.glColor4f(1.0, 0.2, 0.2, 0.3)
+                    ac.glQuad(x, int(round(graph_bottom - b_h)), w, b_h)
+                    ac.glColor4f(1.0, 0.2, 0.2, 0.9)
+                    ac.glQuad(x, int(round(graph_bottom - b_h)), w, int(round(2 * scale_pedals)))
+
+                # Throttle (Green)
+                t_val = pedalHistoryThrottle[i]
+                t_h = int(round(t_val * graph_height))
+                if t_h > 0:
+                    ac.glColor4f(0.0, 1.0, 0.4, 0.25)
+                    ac.glQuad(x, int(round(graph_bottom - t_h)), w, t_h)
+                    ac.glColor4f(0.0, 1.0, 0.4, 0.9)
+                    ac.glQuad(x, int(round(graph_bottom - t_h)), w, int(round(2 * scale_pedals)))
     except Exception as e:
         log_error("drawPedalsGL failed:\n" + traceback.format_exc())
 
@@ -1733,6 +1803,16 @@ def acUpdate(deltaT):
         clutchInput = ac.getCarState(0, acsys.CS.Clutch)
         brakeInput = ac.getCarState(0, acsys.CS.Brake)
         throttleInput = ac.getCarState(0, acsys.CS.Gas)
+
+        # Update pedal history for telemetry graph
+        global pedalHistoryThrottle, pedalHistoryBrake, pedalHistoryClutch, maxPedalHistory
+        pedalHistoryThrottle.append(throttleInput)
+        pedalHistoryBrake.append(brakeInput)
+        pedalHistoryClutch.append(clutchInput)
+        if len(pedalHistoryThrottle) > maxPedalHistory:
+            pedalHistoryThrottle.pop(0)
+            pedalHistoryBrake.pop(0)
+            pedalHistoryClutch.pop(0)
 
         ac.setText(lblPedalClutchVal, "{0:.0f}%".format(clutchInput * 100.0))
         ac.setText(lblPedalBrakeVal, "{0:.0f}%".format(brakeInput * 100.0))
