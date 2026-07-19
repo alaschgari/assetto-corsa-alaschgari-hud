@@ -63,21 +63,18 @@ appPedals = 0
 appKers = 0
 appSettings = 0
 
-# UI Controls per app window
-# Tires App
+# UI Controls
+lblGear = 0
+lblGearLabel = 0
+lblSpeed = 0
+lblSpeedLabel = 0
+lblGForce = 0
 lblPressFL = 0
 lblPressFR = 0
 lblPressRL = 0
 lblPressRR = 0
 lblBrakeF = 0
 lblBrakeR = 0
-
-# Speed App
-lblSpeed = 0
-lblSpeedLabel = 0
-lblGear = 0
-lblGearLabel = 0
-lblGForce = 0
 
 # Pedals App
 lblPedalClutch = 0
