@@ -1,5 +1,5 @@
 # AlaschgariHUD for Assetto Corsa
-# Modular Sidekick Replica HUD - 5 separate floating apps
+# Modular Sidekick Replica HUD - 5 separate floating apps + In-Game scale settings
 
 import ac
 import acsys
@@ -55,12 +55,13 @@ except Exception as e:
 # Scale factor from configuration
 scale = 1.0
 
-# 5 App Windows
+# 6 App Windows
 appShift = 0
 appTires = 0
 appSpeed = 0
 appPedals = 0
 appKers = 0
+appSettings = 0
 
 # UI Controls per app window
 # Tires App
@@ -90,6 +91,10 @@ lblPedalThrottleVal = 0
 lblKersName = 0
 lblWearName = 0
 
+# Settings App
+lblSliderName = 0
+sliderScale = 0
+
 # Telemetry data cache
 gear = "G1"
 speed = 0
@@ -106,11 +111,16 @@ gForceLon = 0.0
 kersCharge = 1.0
 tyreWear = 0.0
 
+# Settings file variables
+show_rpm = True
+show_chassis = True
+show_tire_bars = True
+
 def getConfigPath():
     return os.path.join(os.path.dirname(__file__), 'config.ini')
 
 def loadConfig():
-    global scale
+    global scale, show_rpm, show_chassis, show_tire_bars
     path = getConfigPath()
     if os.path.exists(path):
         try:
@@ -127,16 +137,104 @@ def loadConfig():
                                 if scale > 1.5: scale = 1.5
                             except:
                                 scale = 1.0
+                        elif k == 'show_rpm':
+                            show_rpm = (v.lower() == 'true')
+                        elif k == 'show_chassis':
+                            show_chassis = (v.lower() == 'true')
+                        elif k == 'show_tire_bars':
+                            show_tire_bars = (v.lower() == 'true')
         except Exception as e:
             log_error("loadConfig failed: " + str(e))
 
-def acMain(ac_version):
-    global scale, lblDebugError
+def saveConfig():
+    try:
+        path = getConfigPath()
+        with open(path, 'w') as f:
+            f.write("[SETTINGS]\n")
+            f.write("scale = " + str(int(scale * 100)) + "\n")
+            f.write("show_rpm = " + str(show_rpm) + "\n")
+            f.write("show_chassis = " + str(show_chassis) + "\n")
+            f.write("show_tire_bars = " + str(show_tire_bars) + "\n")
+    except Exception as e:
+        log_error("saveConfig failed: " + str(e))
+
+def updateScale(new_scale):
+    global scale
     global appShift, appTires, appSpeed, appPedals, appKers
     global lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR
     global lblSpeed, lblSpeedLabel, lblGear, lblGearLabel, lblGForce
     global lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
     global lblKersName, lblWearName
+
+    scale = new_scale
+    
+    # 1. Resize all modular windows
+    ac.setSize(appShift, int(480 * scale), int(20 * scale))
+    ac.setSize(appTires, int(310 * scale), int(112 * scale))
+    ac.setSize(appSpeed, int(290 * scale), int(112 * scale))
+    ac.setSize(appPedals, int(162 * scale), int(70 * scale))
+    ac.setSize(appKers, int(162 * scale), int(45 * scale))
+
+    # 2. Update Tires label positions and fonts
+    ac.setPosition(lblPressFL, int(15 * scale), int(22 * scale))
+    ac.setFontSize(lblPressFL, int(11 * scale))
+    ac.setPosition(lblPressRL, int(15 * scale), int(72 * scale))
+    ac.setFontSize(lblPressRL, int(11 * scale))
+    ac.setPosition(lblPressFR, int(212 * scale), int(22 * scale))
+    ac.setFontSize(lblPressFR, int(11 * scale))
+    ac.setPosition(lblPressRR, int(212 * scale), int(72 * scale))
+    ac.setFontSize(lblPressRR, int(11 * scale))
+    ac.setPosition(lblBrakeF, int(265 * scale), int(22 * scale))
+    ac.setFontSize(lblBrakeF, int(13 * scale))
+    ac.setPosition(lblBrakeR, int(265 * scale), int(72 * scale))
+    ac.setFontSize(lblBrakeR, int(13 * scale))
+
+    # 3. Update Speed label positions and fonts
+    ac.setPosition(lblSpeed, int(70 * scale), int(42 * scale))
+    ac.setFontSize(lblSpeed, int(28 * scale))
+    ac.setPosition(lblSpeedLabel, int(70 * scale), int(105 * scale))
+    ac.setFontSize(lblSpeedLabel, int(8 * scale))
+    ac.setPosition(lblGear, int(215 * scale), int(34 * scale))
+    ac.setFontSize(lblGear, int(24 * scale))
+    ac.setPosition(lblGForce, int(215 * scale), int(75 * scale))
+    ac.setFontSize(lblGForce, int(9 * scale))
+    ac.setPosition(lblGearLabel, int(215 * scale), int(105 * scale))
+    ac.setFontSize(lblGearLabel, int(8 * scale))
+
+    # 4. Update Pedals label positions and fonts
+    ac.setPosition(lblPedalClutch, int(8 * scale), int(5 * scale))
+    ac.setFontSize(lblPedalClutch, int(8 * scale))
+    ac.setPosition(lblPedalBrake, int(8 * scale), int(23 * scale))
+    ac.setFontSize(lblPedalBrake, int(8 * scale))
+    ac.setPosition(lblPedalThrottle, int(8 * scale), int(41 * scale))
+    ac.setFontSize(lblPedalThrottle, int(8 * scale))
+    ac.setPosition(lblPedalClutchVal, int(154 * scale), int(5 * scale))
+    ac.setFontSize(lblPedalClutchVal, int(8 * scale))
+    ac.setPosition(lblPedalBrakeVal, int(154 * scale), int(23 * scale))
+    ac.setFontSize(lblPedalBrakeVal, int(8 * scale))
+    ac.setPosition(lblPedalThrottleVal, int(154 * scale), int(41 * scale))
+    ac.setFontSize(lblPedalThrottleVal, int(8 * scale))
+
+    # 5. Update KERS label positions and fonts
+    ac.setPosition(lblKersName, int(12 * scale), int(16 * scale))
+    ac.setFontSize(lblKersName, int(9 * scale))
+    ac.setPosition(lblWearName, int(90 * scale), int(16 * scale))
+    ac.setFontSize(lblWearName, int(9 * scale))
+
+def onScaleSliderChange(value):
+    global scale, lblSliderName
+    new_scale = value / 100.0
+    updateScale(new_scale)
+    ac.setText(lblSliderName, "HUD Scale: {0:.0f}%".format(value))
+    saveConfig()
+
+def acMain(ac_version):
+    global scale, lblDebugError
+    global appShift, appTires, appSpeed, appPedals, appKers, appSettings
+    global lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR
+    global lblSpeed, lblSpeedLabel, lblGear, lblGearLabel, lblGForce
+    global lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
+    global lblKersName, lblWearName, lblSliderName, sliderScale
 
     try:
         loadConfig()
@@ -153,7 +251,7 @@ def acMain(ac_version):
         ac.addRenderCallback(appShift, drawShiftGL)
 
         # ---------------------------------------------
-        # 2. APP: TIRES & BRAKES STATUS (320px x 110px)
+        # 2. APP: TIRES & BRAKES STATUS (310px x 112px)
         # ---------------------------------------------
         appTires = ac.newApp("AlaschgariHUD - Tires & Brakes")
         ac.setSize(appTires, int(310 * scale), int(112 * scale))
@@ -294,6 +392,23 @@ def acMain(ac_version):
         ac.setPosition(lblDebugError, int(10 * scale), int(115 * scale))
         ac.setFontSize(lblDebugError, int(8 * scale))
         ac.setFontColor(lblDebugError, 1.0, 0.2, 0.2, 1.0)
+
+        # ---------------------------------------------
+        # 6. APP: HUD IN-GAME CONFIG WINDOW
+        # ---------------------------------------------
+        appSettings = ac.newApp("AlaschgariHUD - Config")
+        ac.setSize(appSettings, 250, 80)
+        ac.setTitle(appSettings, "AlaschgariHUD Options")
+        
+        lblSliderName = ac.addLabel(appSettings, "HUD Scale: {0:.0f}%".format(scale * 100))
+        ac.setPosition(lblSliderName, 10, 10)
+        ac.setFontSize(lblSliderName, 10)
+
+        sliderScale = ac.addSlider(appSettings, "Scale", 50, 150)
+        ac.setPosition(sliderScale, 10, 35)
+        ac.setSize(sliderScale, 230, 20)
+        ac.setValue(sliderScale, int(scale * 100))
+        ac.addOnValueChangedListener(sliderScale, onScaleSliderChange)
 
         # Max RPM default check from shared memory
         if simInfo is not None:
