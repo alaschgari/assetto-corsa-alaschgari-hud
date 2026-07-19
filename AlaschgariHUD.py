@@ -455,12 +455,12 @@ def acMain(ac_version):
         
         # 1. Scale
         lblSliderName = ac.addLabel(appSettings, "HUD Scale: {0:.0f}%".format(scale * 100))
-        ac.setPosition(lblSliderName, 10, 10)
+        ac.setPosition(lblSliderName, 10, 30)
         ac.setFontSize(lblSliderName, 9)
 
-        sliderScale = ac.addSpinner(appSettings, "Scale")
-        ac.setPosition(sliderScale, 110, 8)
-        ac.setSize(sliderScale, 120, 18)
+        sliderScale = ac.addSpinner(appSettings, "")
+        ac.setPosition(sliderScale, 120, 28)
+        ac.setSize(sliderScale, 110, 18)
         ac.setRange(sliderScale, 50, 150)
         ac.setStep(sliderScale, 5)
         ac.setValue(sliderScale, int(scale * 100))
@@ -468,12 +468,12 @@ def acMain(ac_version):
 
         # 2. Opacity
         lblOpacityName = ac.addLabel(appSettings, "HUD Opacity: {0}%".format(opacity_pct))
-        ac.setPosition(lblOpacityName, 10, 45)
+        ac.setPosition(lblOpacityName, 10, 65)
         ac.setFontSize(lblOpacityName, 9)
 
-        sliderOpacity = ac.addSpinner(appSettings, "Opacity")
-        ac.setPosition(sliderOpacity, 110, 43)
-        ac.setSize(sliderOpacity, 120, 18)
+        sliderOpacity = ac.addSpinner(appSettings, "")
+        ac.setPosition(sliderOpacity, 120, 63)
+        ac.setSize(sliderOpacity, 110, 18)
         ac.setRange(sliderOpacity, 10, 100)
         ac.setStep(sliderOpacity, 10)
         ac.setValue(sliderOpacity, opacity_pct)
@@ -481,12 +481,12 @@ def acMain(ac_version):
 
         # 3. BG Color theme
         lblBgColorName = ac.addLabel(appSettings, "BG Color (0-3): {0}".format(bg_color_idx))
-        ac.setPosition(lblBgColorName, 10, 80)
+        ac.setPosition(lblBgColorName, 10, 100)
         ac.setFontSize(lblBgColorName, 9)
 
-        sliderBgColor = ac.addSpinner(appSettings, "BGColor")
-        ac.setPosition(sliderBgColor, 110, 78)
-        ac.setSize(sliderBgColor, 120, 18)
+        sliderBgColor = ac.addSpinner(appSettings, "")
+        ac.setPosition(sliderBgColor, 120, 98)
+        ac.setSize(sliderBgColor, 110, 18)
         ac.setRange(sliderBgColor, 0, 3)
         ac.setStep(sliderBgColor, 1)
         ac.setValue(sliderBgColor, bg_color_idx)
@@ -494,12 +494,12 @@ def acMain(ac_version):
 
         # 4. Text Color theme
         lblTextColorName = ac.addLabel(appSettings, "Text Color (0-4): {0}".format(text_color_idx))
-        ac.setPosition(lblTextColorName, 10, 115)
+        ac.setPosition(lblTextColorName, 10, 135)
         ac.setFontSize(lblTextColorName, 9)
 
-        sliderTextColor = ac.addSpinner(appSettings, "TextColor")
-        ac.setPosition(sliderTextColor, 110, 113)
-        ac.setSize(sliderTextColor, 120, 18)
+        sliderTextColor = ac.addSpinner(appSettings, "")
+        ac.setPosition(sliderTextColor, 120, 133)
+        ac.setSize(sliderTextColor, 110, 18)
         ac.setRange(sliderTextColor, 0, 4)
         ac.setStep(sliderTextColor, 1)
         ac.setValue(sliderTextColor, text_color_idx)
