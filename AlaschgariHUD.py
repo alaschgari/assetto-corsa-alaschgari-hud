@@ -18,7 +18,8 @@ os.environ['PATH'] = os.environ['PATH'] + ";."
 
 import traceback
 
-# Global Debug label
+# Global Debug controls
+appDebug = 0
 lblDebugError = 0
 
 def log_error(msg):
@@ -30,6 +31,7 @@ def log_error(msg):
         if lblDebugError != 0:
             lines = [l for l in msg.split('\n') if l.strip()]
             last_line = lines[-1] if lines else "Unknown Error"
+            ac.setFontColor(lblDebugError, 1.0, 0.2, 0.2, 1.0) # Red for error
             ac.setText(lblDebugError, "ERR: " + last_line[:65])
     except:
         pass
@@ -83,6 +85,7 @@ scale_fuel = 1.0
 scale_perf = 1.0
 scale_damage = 1.0
 scale_track = 1.0
+scale_debug = 1.0
 
 # General Settings
 show_rpm = True
@@ -186,6 +189,7 @@ sliderScaleFuel = 0
 sliderScalePerf = 0
 sliderScaleDamage = 0
 sliderScaleTrack = 0
+sliderScaleDebug = 0
 
 # Telemetry data cache
 gear = "G1"
@@ -242,12 +246,13 @@ last_scale_fuel = 100.0
 last_scale_perf = 100.0
 last_scale_damage = 100.0
 last_scale_track = 100.0
+last_scale_debug = 100.0
 
 def getConfigPath():
     return os.path.join(os.path.dirname(__file__), 'config.ini')
 
 def loadConfig():
-    global scale_shift, scale_tires, scale_speed, scale_gear, scale_pedals, scale_kers, scale_times, scale_fuel, scale_perf, scale_damage, scale_track
+    global scale_shift, scale_tires, scale_speed, scale_gear, scale_pedals, scale_kers, scale_times, scale_fuel, scale_perf, scale_damage, scale_track, scale_debug
     global show_rpm, show_chassis, show_tire_bars, bg_color_idx, opacity_pct, text_color_idx
     path = getConfigPath()
     if os.path.exists(path):
@@ -269,6 +274,7 @@ def loadConfig():
                         elif k == 'scale_perf': scale_perf = float(v) / 100.0
                         elif k == 'scale_damage': scale_damage = float(v) / 100.0
                         elif k == 'scale_track': scale_track = float(v) / 100.0
+                        elif k == 'scale_debug': scale_debug = float(v) / 100.0
                         elif k == 'show_rpm': show_rpm = (v.lower() == 'true')
                         elif k == 'show_chassis': show_chassis = (v.lower() == 'true')
                         elif k == 'show_tire_bars': show_tire_bars = (v.lower() == 'true')
@@ -300,6 +306,7 @@ def saveConfig():
             f.write("scale_perf = " + str(int(scale_perf * 100)) + "\n")
             f.write("scale_damage = " + str(int(scale_damage * 100)) + "\n")
             f.write("scale_track = " + str(int(scale_track * 100)) + "\n")
+            f.write("scale_debug = " + str(int(scale_debug * 100)) + "\n")
             f.write("show_rpm = " + str(show_rpm) + "\n")
             f.write("show_chassis = " + str(show_chassis) + "\n")
             f.write("show_tire_bars = " + str(show_tire_bars) + "\n")
@@ -336,12 +343,12 @@ def applyTextColors():
         log_error("applyTextColors failed:\n" + traceback.format_exc())
 
 def updateWindowsBackground():
-    global appTires, appSpeed, appGear, appPedals, appKers, appTimes, appFuel, appPerf, appDamage, appTrack
+    global appTires, appSpeed, appGear, appPedals, appKers, appTimes, appFuel, appPerf, appDamage, appTrack, appDebug
     global bg_color_idx, opacity_pct
     try:
         c = BG_COLORS[bg_color_idx]
         op = opacity_pct / 100.0
-        for app in [appTires, appSpeed, appGear, appPedals, appKers, appTimes, appFuel, appPerf, appDamage, appTrack]:
+        for app in [appTires, appSpeed, appGear, appPedals, appKers, appTimes, appFuel, appPerf, appDamage, appTrack, appDebug]:
             if app != 0:
                 ac.setBackgroundColor(app, c[0], c[1], c[2])
                 ac.setBackgroundOpacity(app, op)
@@ -502,6 +509,14 @@ def updateScaleTrack(s):
     ac.setPosition(lblTrackWind, int(round(8 * scale_track)), int(round(5 * scale_track)))
     ac.setFontSize(lblTrackWind, int(round(8 * scale_track)))
 
+def updateScaleDebug(s):
+    global scale_debug
+    global appDebug, lblDebugError
+    scale_debug = s
+    ac.setSize(appDebug, int(round(310 * scale_debug)), int(round(40 * scale_debug)))
+    ac.setPosition(lblDebugError, int(round(10 * scale_debug)), int(round(12 * scale_debug)))
+    ac.setFontSize(lblDebugError, int(round(8 * scale_debug)))
+
 def formatTime(ms):
     if ms <= 0:
         return "--:--.---"
@@ -522,9 +537,9 @@ def formatTimeShort(ms):
     return "{:d}:{:02d}.{:d}".format(minutes, seconds, tenths)
 
 def acMain(ac_version):
-    global scale_shift, scale_tires, scale_speed, scale_gear, scale_pedals, scale_kers, scale_times, scale_fuel, scale_perf, scale_damage, scale_track
+    global scale_shift, scale_tires, scale_speed, scale_gear, scale_pedals, scale_kers, scale_times, scale_fuel, scale_perf, scale_damage, scale_track, scale_debug
     global lblDebugError, bg_color_idx, opacity_pct, text_color_idx
-    global appShift, appTires, appSpeed, appGear, appPedals, appKers, appTimes, appFuel, appPerf, appDamage, appTrack, appSettings
+    global appShift, appTires, appSpeed, appGear, appPedals, appKers, appTimes, appFuel, appPerf, appDamage, appTrack, appDebug, appSettings
     global lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR, imgChassis
     global lblSpeed, lblSpeedLabel, lblGear, lblGearLabel, lblGForce
     global imgPedalClutch, imgPedalBrake, imgPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
@@ -535,9 +550,9 @@ def acMain(ac_version):
     global imgDamage, lblDamageEngine, lblDamageAero, lblDamageTrans
     global imgTrack, lblTrackGrip, lblTrackWind
     global lblOpacityName, sliderOpacity, lblBgColorName, sliderBgColor, lblTextColorName, sliderTextColor
-    global sliderScaleShift, sliderScaleTires, sliderScaleSpeed, sliderScaleGear, sliderScalePedals, sliderScaleKers, sliderScaleTimes, sliderScaleFuel, sliderScalePerf, sliderScaleDamage, sliderScaleTrack
+    global sliderScaleShift, sliderScaleTires, sliderScaleSpeed, sliderScaleGear, sliderScalePedals, sliderScaleKers, sliderScaleTimes, sliderScaleFuel, sliderScalePerf, sliderScaleDamage, sliderScaleTrack, sliderScaleDebug
     global last_opacity_value, last_bg_color_value, last_text_color_value
-    global last_scale_shift, last_scale_tires, last_scale_speed, last_scale_gear, last_scale_pedals, last_scale_kers, last_scale_times, last_scale_fuel, last_scale_perf, last_scale_damage, last_scale_track
+    global last_scale_shift, last_scale_tires, last_scale_speed, last_scale_gear, last_scale_pedals, last_scale_kers, last_scale_times, last_scale_fuel, last_scale_perf, last_scale_damage, last_scale_track, last_scale_debug
 
     try:
         loadConfig()
@@ -843,11 +858,19 @@ def acMain(ac_version):
         ac.setPosition(lblTrackWind, int(round(8 * scale_track)), int(round(5 * scale_track)))
         ac.setFontSize(lblTrackWind, int(round(8 * scale_track)))
 
-        # Setup main debug label in tires app window as anchor
-        lblDebugError = ac.addLabel(appTires, "")
-        ac.setPosition(lblDebugError, int(round(10 * scale_tires)), int(round(115 * scale_tires)))
-        ac.setFontSize(lblDebugError, int(round(8 * scale_tires)))
-        ac.setFontColor(lblDebugError, 1.0, 0.2, 0.2, 1.0)
+        # ---------------------------------------------
+        # 5g. APP: ERROR LOG & DEBUG (310px x 40px)
+        # ---------------------------------------------
+        appDebug = ac.newApp("AlaschgariHUD - Debug Console")
+        ac.setSize(appDebug, int(round(310 * scale_debug)), int(round(40 * scale_debug)))
+        ac.setTitle(appDebug, "")
+        ac.drawBorder(appDebug, 0)
+        ac.setIconPosition(appDebug, -10000, -10000)
+
+        lblDebugError = ac.addLabel(appDebug, "System Health: OK")
+        ac.setPosition(lblDebugError, int(round(10 * scale_debug)), int(round(12 * scale_debug)))
+        ac.setFontSize(lblDebugError, int(round(8 * scale_debug)))
+        ac.setFontColor(lblDebugError, 0.0, 1.0, 0.4, 1.0) # Toxic green for OK state
 
         # Apply starting backgrounds and opacities nativly
         updateWindowsBackground()
@@ -856,7 +879,7 @@ def acMain(ac_version):
         # 6. APP: HUD IN-GAME CONFIG WINDOW
         # ---------------------------------------------
         appSettings = ac.newApp("AlaschgariHUD - Config")
-        ac.setSize(appSettings, 320, 480)
+        ac.setSize(appSettings, 320, 510)
         ac.setTitle(appSettings, "AlaschgariHUD Options")
         
         # Row layout generator
@@ -891,7 +914,8 @@ def acMain(ac_version):
         _, sliderScaleFuel = addConfigRow("Scale: Fuel Calc", 50, 150, 5, int(scale_fuel * 100), y); y += 30
         _, sliderScalePerf = addConfigRow("Scale: Performance", 50, 150, 5, int(scale_perf * 100), y); y += 30
         _, sliderScaleDamage = addConfigRow("Scale: Damages", 50, 150, 5, int(scale_damage * 100), y); y += 30
-        _, sliderScaleTrack = addConfigRow("Scale: Track Wind", 50, 150, 5, int(scale_track * 100), y)
+        _, sliderScaleTrack = addConfigRow("Scale: Track Wind", 50, 150, 5, int(scale_track * 100), y); y += 30
+        _, sliderScaleDebug = addConfigRow("Scale: Debug Console", 50, 150, 5, int(scale_debug * 100), y)
 
         # Apply starting custom text colors
         applyTextColors()
@@ -903,6 +927,7 @@ def acMain(ac_version):
                 with open(path, 'r') as f:
                     err_lines = [l.strip() for l in f if l.strip()]
                     if err_lines:
+                        ac.setFontColor(lblDebugError, 1.0, 0.2, 0.2, 1.0)
                         ac.setText(lblDebugError, "START ERR: " + err_lines[-1][:65])
         except:
             pass
@@ -1114,7 +1139,7 @@ def drawFuelGL(deltaT):
 
 def acUpdate(deltaT):
     global gear, speed, rpms, fuel, tireTemps, tirePressures, maxRpm
-    global scale_shift, scale_tires, scale_speed, scale_gear, scale_pedals, scale_kers, scale_times, scale_fuel, scale_perf, scale_damage, scale_track
+    global scale_shift, scale_tires, scale_speed, scale_gear, scale_pedals, scale_kers, scale_times, scale_fuel, scale_perf, scale_damage, scale_track, scale_debug
     global lblGear, lblSpeed, lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR, lblGForce
     global clutchInput, brakeInput, throttleInput, kersCharge, tyreWear, brakeTemps, gForceLat, gForceLon
     global lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
@@ -1127,12 +1152,12 @@ def acUpdate(deltaT):
     global last_opacity_value, sliderOpacity, lblOpacityName, opacity_pct
     global last_bg_color_value, sliderBgColor, lblBgColorName, bg_color_idx
     global last_text_color_value, sliderTextColor, lblTextColorName, text_color_idx
-    global sliderScaleShift, sliderScaleTires, sliderScaleSpeed, sliderScaleGear, sliderScalePedals, sliderScaleKers, sliderScaleTimes, sliderScaleFuel, sliderScalePerf, sliderScaleDamage, sliderScaleTrack
-    global last_scale_shift, last_scale_tires, last_scale_speed, last_scale_gear, last_scale_pedals, last_scale_kers, last_scale_times, last_scale_fuel, last_scale_perf, last_scale_damage, last_scale_track
+    global sliderScaleShift, sliderScaleTires, sliderScaleSpeed, sliderScaleGear, sliderScalePedals, sliderScaleKers, sliderScaleTimes, sliderScaleFuel, sliderScalePerf, sliderScaleDamage, sliderScaleTrack, sliderScaleDebug
+    global last_scale_shift, last_scale_tires, last_scale_speed, last_scale_gear, last_scale_pedals, last_scale_kers, last_scale_times, last_scale_fuel, last_scale_perf, last_scale_damage, last_scale_track, last_scale_debug
 
     # 0. Check in-game Scale, Opacity, and Colors Spinners
     try:
-        # 11 scale sliders
+        # 12 scale sliders
         if sliderScaleShift != 0:
             val = int(round(ac.getValue(sliderScaleShift)))
             if val != last_scale_shift:
@@ -1198,6 +1223,12 @@ def acUpdate(deltaT):
             if val != last_scale_track:
                 last_scale_track = val
                 updateScaleTrack(val / 100.0)
+                saveConfig()
+        if sliderScaleDebug != 0:
+            val = int(round(ac.getValue(sliderScaleDebug)))
+            if val != last_scale_debug:
+                last_scale_debug = val
+                updateScaleDebug(val / 100.0)
                 saveConfig()
 
         # Opacity
