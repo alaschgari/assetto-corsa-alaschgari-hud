@@ -355,7 +355,7 @@ def updateWindowsBackground():
     except Exception as e:
         log_error("updateWindowsBackground failed:\n" + traceback.format_exc())
 
-# Individual Widget Scaling Hooks
+# Individual Widget Scaling Hooks (All fonts scaled to 24px default)
 def updateScaleShift(s):
     global scale_shift
     scale_shift = s
@@ -367,17 +367,17 @@ def updateScaleTires(s):
     scale_tires = s
     ac.setSize(appTires, int(round(310 * scale_tires)), int(round(125 * scale_tires)))
     ac.setPosition(lblPressFL, int(round(15 * scale_tires)), int(round(22 * scale_tires)))
-    ac.setFontSize(lblPressFL, int(round(11 * scale_tires)))
+    ac.setFontSize(lblPressFL, int(round(24 * scale_tires)))
     ac.setPosition(lblPressRL, int(round(15 * scale_tires)), int(round(72 * scale_tires)))
-    ac.setFontSize(lblPressRL, int(round(11 * scale_tires)))
+    ac.setFontSize(lblPressRL, int(round(24 * scale_tires)))
     ac.setPosition(lblPressFR, int(round(212 * scale_tires)), int(round(22 * scale_tires)))
-    ac.setFontSize(lblPressFR, int(round(11 * scale_tires)))
+    ac.setFontSize(lblPressFR, int(round(24 * scale_tires)))
     ac.setPosition(lblPressRR, int(round(212 * scale_tires)), int(round(72 * scale_tires)))
-    ac.setFontSize(lblPressRR, int(round(11 * scale_tires)))
+    ac.setFontSize(lblPressRR, int(round(24 * scale_tires)))
     ac.setPosition(lblBrakeF, int(round(265 * scale_tires)), int(round(22 * scale_tires)))
-    ac.setFontSize(lblBrakeF, int(round(13 * scale_tires)))
+    ac.setFontSize(lblBrakeF, int(round(24 * scale_tires)))
     ac.setPosition(lblBrakeR, int(round(265 * scale_tires)), int(round(72 * scale_tires)))
-    ac.setFontSize(lblBrakeR, int(round(13 * scale_tires)))
+    ac.setFontSize(lblBrakeR, int(round(24 * scale_tires)))
     if imgChassis != 0:
         ac.setPosition(imgChassis, int(round(110 * scale_tires)), int(round(10 * scale_tires)))
         ac.setSize(imgChassis, int(round(90 * scale_tires)), int(round(90 * scale_tires)))
@@ -388,9 +388,9 @@ def updateScaleSpeed(s):
     scale_speed = s
     ac.setSize(appSpeed, int(round(140 * scale_speed)), int(round(125 * scale_speed)))
     ac.setPosition(lblSpeed, int(round(70 * scale_speed)), int(round(42 * scale_speed)))
-    ac.setFontSize(lblSpeed, int(round(28 * scale_speed)))
+    ac.setFontSize(lblSpeed, int(round(24 * scale_speed)))
     ac.setPosition(lblSpeedLabel, int(round(70 * scale_speed)), int(round(105 * scale_speed)))
-    ac.setFontSize(lblSpeedLabel, int(round(8 * scale_speed)))
+    ac.setFontSize(lblSpeedLabel, int(round(24 * scale_speed)))
 
 def updateScaleGear(s):
     global scale_gear
@@ -400,9 +400,9 @@ def updateScaleGear(s):
     ac.setPosition(lblGear, int(round(70 * scale_gear)), int(round(34 * scale_gear)))
     ac.setFontSize(lblGear, int(round(24 * scale_gear)))
     ac.setPosition(lblGForce, int(round(70 * scale_gear)), int(round(75 * scale_gear)))
-    ac.setFontSize(lblGForce, int(round(9 * scale_gear)))
+    ac.setFontSize(lblGForce, int(round(24 * scale_gear)))
     ac.setPosition(lblGearLabel, int(round(70 * scale_gear)), int(round(105 * scale_gear)))
-    ac.setFontSize(lblGearLabel, int(round(8 * scale_gear)))
+    ac.setFontSize(lblGearLabel, int(round(24 * scale_gear)))
 
 def updateScalePedals(s):
     global scale_pedals
@@ -420,11 +420,11 @@ def updateScalePedals(s):
         ac.setSize(imgPedalThrottle, int(round(18 * scale_pedals)), int(round(18 * scale_pedals)))
 
     ac.setPosition(lblPedalClutchVal, int(round(154 * scale_pedals)), int(round(5 * scale_pedals)))
-    ac.setFontSize(lblPedalClutchVal, int(round(8 * scale_pedals)))
+    ac.setFontSize(lblPedalClutchVal, int(round(24 * scale_pedals)))
     ac.setPosition(lblPedalBrakeVal, int(round(154 * scale_pedals)), int(round(23 * scale_pedals)))
-    ac.setFontSize(lblPedalBrakeVal, int(round(8 * scale_pedals)))
+    ac.setFontSize(lblPedalBrakeVal, int(round(24 * scale_pedals)))
     ac.setPosition(lblPedalThrottleVal, int(round(154 * scale_pedals)), int(round(41 * scale_pedals)))
-    ac.setFontSize(lblPedalThrottleVal, int(round(8 * scale_pedals)))
+    ac.setFontSize(lblPedalThrottleVal, int(round(24 * scale_pedals)))
 
 def updateScaleKers(s):
     global scale_kers
@@ -444,13 +444,13 @@ def updateScaleTimes(s):
     scale_times = s
     ac.setSize(appTimes, int(round(162 * scale_times)), int(round(70 * scale_times)))
     ac.setPosition(lblTimesCurrent, int(round(81 * scale_times)), int(round(22 * scale_times)))
-    ac.setFontSize(lblTimesCurrent, int(round(15 * scale_times)))
+    ac.setFontSize(lblTimesCurrent, int(round(24 * scale_times)))
     ac.setPosition(lblTimesBest, int(round(8 * scale_times)), int(round(5 * scale_times)))
-    ac.setFontSize(lblTimesBest, int(round(8 * scale_times)))
+    ac.setFontSize(lblTimesBest, int(round(24 * scale_times)))
     ac.setPosition(lblTimesLast, int(round(154 * scale_times)), int(round(5 * scale_times)))
-    ac.setFontSize(lblTimesLast, int(round(8 * scale_times)))
+    ac.setFontSize(lblTimesLast, int(round(24 * scale_times)))
     ac.setPosition(lblTimesLaps, int(round(81 * scale_times)), int(round(50 * scale_times)))
-    ac.setFontSize(lblTimesLaps, int(round(8 * scale_times)))
+    ac.setFontSize(lblTimesLaps, int(round(24 * scale_times)))
 
 def updateScaleFuel(s):
     global scale_fuel
@@ -458,13 +458,13 @@ def updateScaleFuel(s):
     scale_fuel = s
     ac.setSize(appFuel, int(round(162 * scale_fuel)), int(round(70 * scale_fuel)))
     ac.setPosition(lblFuelCurrent, int(round(81 * scale_fuel)), int(round(22 * scale_fuel)))
-    ac.setFontSize(lblFuelCurrent, int(round(14 * scale_fuel)))
+    ac.setFontSize(lblFuelCurrent, int(round(24 * scale_fuel)))
     ac.setPosition(lblFuelCons, int(round(8 * scale_fuel)), int(round(5 * scale_fuel)))
-    ac.setFontSize(lblFuelCons, int(round(8 * scale_fuel)))
+    ac.setFontSize(lblFuelCons, int(round(24 * scale_fuel)))
     ac.setPosition(lblFuelEst, int(round(154 * scale_fuel)), int(round(5 * scale_fuel)))
-    ac.setFontSize(lblFuelEst, int(round(8 * scale_fuel)))
+    ac.setFontSize(lblFuelEst, int(round(24 * scale_fuel)))
     ac.setPosition(lblFuelTemps, int(round(81 * scale_fuel)), int(round(50 * scale_fuel)))
-    ac.setFontSize(lblFuelTemps, int(round(8 * scale_fuel)))
+    ac.setFontSize(lblFuelTemps, int(round(24 * scale_fuel)))
 
 def updateScalePerf(s):
     global scale_perf
@@ -475,11 +475,11 @@ def updateScalePerf(s):
         ac.setPosition(imgPerf, int(round(12 * scale_perf)), int(round(23 * scale_perf)))
         ac.setSize(imgPerf, int(round(24 * scale_perf)), int(round(24 * scale_perf)))
     ac.setPosition(lblPerfDelta, int(round(102 * scale_perf)), int(round(22 * scale_perf)))
-    ac.setFontSize(lblPerfDelta, int(round(15 * scale_perf)))
+    ac.setFontSize(lblPerfDelta, int(round(24 * scale_perf)))
     ac.setPosition(lblPerfTurbo, int(round(8 * scale_perf)), int(round(5 * scale_perf)))
-    ac.setFontSize(lblPerfTurbo, int(round(8 * scale_perf)))
+    ac.setFontSize(lblPerfTurbo, int(round(24 * scale_perf)))
     ac.setPosition(lblPerfDRS, int(round(154 * scale_perf)), int(round(5 * scale_perf)))
-    ac.setFontSize(lblPerfDRS, int(round(8 * scale_perf)))
+    ac.setFontSize(lblPerfDRS, int(round(24 * scale_perf)))
 
 def updateScaleDamage(s):
     global scale_damage
@@ -490,11 +490,11 @@ def updateScaleDamage(s):
         ac.setPosition(imgDamage, int(round(12 * scale_damage)), int(round(23 * scale_damage)))
         ac.setSize(imgDamage, int(round(24 * scale_damage)), int(round(24 * scale_damage)))
     ac.setPosition(lblDamageEngine, int(round(102 * scale_damage)), int(round(22 * scale_damage)))
-    ac.setFontSize(lblDamageEngine, int(round(13 * scale_damage)))
+    ac.setFontSize(lblDamageEngine, int(round(24 * scale_damage)))
     ac.setPosition(lblDamageAero, int(round(8 * scale_damage)), int(round(5 * scale_damage)))
-    ac.setFontSize(lblDamageAero, int(round(8 * scale_damage)))
+    ac.setFontSize(lblDamageAero, int(round(24 * scale_damage)))
     ac.setPosition(lblDamageTrans, int(round(154 * scale_damage)), int(round(5 * scale_damage)))
-    ac.setFontSize(lblDamageTrans, int(round(8 * scale_damage)))
+    ac.setFontSize(lblDamageTrans, int(round(24 * scale_damage)))
 
 def updateScaleTrack(s):
     global scale_track
@@ -505,9 +505,9 @@ def updateScaleTrack(s):
         ac.setPosition(imgTrack, int(round(12 * scale_track)), int(round(23 * scale_track)))
         ac.setSize(imgTrack, int(round(24 * scale_track)), int(round(24 * scale_track)))
     ac.setPosition(lblTrackGrip, int(round(102 * scale_track)), int(round(22 * scale_track)))
-    ac.setFontSize(lblTrackGrip, int(round(13 * scale_track)))
+    ac.setFontSize(lblTrackGrip, int(round(24 * scale_track)))
     ac.setPosition(lblTrackWind, int(round(8 * scale_track)), int(round(5 * scale_track)))
-    ac.setFontSize(lblTrackWind, int(round(8 * scale_track)))
+    ac.setFontSize(lblTrackWind, int(round(24 * scale_track)))
 
 def updateScaleDebug(s):
     global scale_debug
@@ -515,7 +515,7 @@ def updateScaleDebug(s):
     scale_debug = s
     ac.setSize(appDebug, int(round(310 * scale_debug)), int(round(40 * scale_debug)))
     ac.setPosition(lblDebugError, int(round(10 * scale_debug)), int(round(12 * scale_debug)))
-    ac.setFontSize(lblDebugError, int(round(8 * scale_debug)))
+    ac.setFontSize(lblDebugError, int(round(24 * scale_debug)))
 
 def formatTime(ms):
     if ms <= 0:
@@ -535,6 +535,11 @@ def formatTimeShort(ms):
     seconds = int(seconds % 60)
     tenths = int(milliseconds / 100)
     return "{:d}:{:02d}.{:d}".format(minutes, seconds, tenths)
+
+def createBoldLabel(app, text):
+    lbl = ac.addLabel(app, text)
+    ac.setFontBold(lbl, 1)
+    return lbl
 
 def acMain(ac_version):
     global scale_shift, scale_tires, scale_speed, scale_gear, scale_pedals, scale_kers, scale_times, scale_fuel, scale_perf, scale_damage, scale_track, scale_debug
@@ -578,33 +583,33 @@ def acMain(ac_version):
         ac.setIconPosition(appTires, -10000, -10000)
         ac.addRenderCallback(appTires, drawTiresGL)
 
-        # Labels
-        lblPressFL = ac.addLabel(appTires, "0\n0.0")
+        # Labels (All made bold natively)
+        lblPressFL = createBoldLabel(appTires, "0\n0.0")
         ac.setPosition(lblPressFL, int(round(15 * scale_tires)), int(round(22 * scale_tires)))
-        ac.setFontSize(lblPressFL, int(round(11 * scale_tires)))
+        ac.setFontSize(lblPressFL, int(round(24 * scale_tires)))
 
-        lblPressRL = ac.addLabel(appTires, "0\n0.0")
+        lblPressRL = createBoldLabel(appTires, "0\n0.0")
         ac.setPosition(lblPressRL, int(round(15 * scale_tires)), int(round(72 * scale_tires)))
-        ac.setFontSize(lblPressRL, int(round(11 * scale_tires)))
+        ac.setFontSize(lblPressRL, int(round(24 * scale_tires)))
 
-        lblPressFR = ac.addLabel(appTires, "0\n0.0")
+        lblPressFR = createBoldLabel(appTires, "0\n0.0")
         ac.setPosition(lblPressFR, int(round(212 * scale_tires)), int(round(22 * scale_tires)))
-        ac.setFontSize(lblPressFR, int(round(11 * scale_tires)))
+        ac.setFontSize(lblPressFR, int(round(24 * scale_tires)))
         ac.setFontAlignment(lblPressFR, "right")
 
-        lblPressRR = ac.addLabel(appTires, "0\n0.0")
+        lblPressRR = createBoldLabel(appTires, "0\n0.0")
         ac.setPosition(lblPressRR, int(round(212 * scale_tires)), int(round(72 * scale_tires)))
-        ac.setFontSize(lblPressRR, int(round(11 * scale_tires)))
+        ac.setFontSize(lblPressRR, int(round(24 * scale_tires)))
         ac.setFontAlignment(lblPressRR, "right")
 
-        lblBrakeF = ac.addLabel(appTires, "0")
+        lblBrakeF = createBoldLabel(appTires, "0")
         ac.setPosition(lblBrakeF, int(round(265 * scale_tires)), int(round(22 * scale_tires)))
-        ac.setFontSize(lblBrakeF, int(round(13 * scale_tires)))
+        ac.setFontSize(lblBrakeF, int(round(24 * scale_tires)))
         ac.setFontColor(lblBrakeF, 1.0, 0.2, 0.2, 1.0)
 
-        lblBrakeR = ac.addLabel(appTires, "0")
+        lblBrakeR = createBoldLabel(appTires, "0")
         ac.setPosition(lblBrakeR, int(round(265 * scale_tires)), int(round(72 * scale_tires)))
-        ac.setFontSize(lblBrakeR, int(round(13 * scale_tires)))
+        ac.setFontSize(lblBrakeR, int(round(24 * scale_tires)))
         ac.setFontColor(lblBrakeR, 1.0, 0.2, 0.2, 1.0)
 
         # Car Chassis Vector Overlay
@@ -623,14 +628,14 @@ def acMain(ac_version):
         ac.setIconPosition(appSpeed, -10000, -10000)
         ac.addRenderCallback(appSpeed, drawSpeedGL)
 
-        lblSpeed = ac.addLabel(appSpeed, "0 KM/H")
+        lblSpeed = createBoldLabel(appSpeed, "0 KM/H")
         ac.setPosition(lblSpeed, int(round(70 * scale_speed)), int(round(42 * scale_speed)))
-        ac.setFontSize(lblSpeed, int(round(28 * scale_speed)))
+        ac.setFontSize(lblSpeed, int(round(24 * scale_speed)))
         ac.setFontAlignment(lblSpeed, "center")
 
-        lblSpeedLabel = ac.addLabel(appSpeed, "Speedometer")
+        lblSpeedLabel = createBoldLabel(appSpeed, "Speedometer")
         ac.setPosition(lblSpeedLabel, int(round(70 * scale_speed)), int(round(105 * scale_speed)))
-        ac.setFontSize(lblSpeedLabel, int(round(8 * scale_speed)))
+        ac.setFontSize(lblSpeedLabel, int(round(24 * scale_speed)))
         ac.setFontAlignment(lblSpeedLabel, "center")
         ac.setFontColor(lblSpeedLabel, 0.4, 0.4, 0.4, 1.0)
 
@@ -643,19 +648,19 @@ def acMain(ac_version):
         ac.drawBorder(appGear, 0)
         ac.setIconPosition(appGear, -10000, -10000)
 
-        lblGear = ac.addLabel(appGear, "G1")
+        lblGear = createBoldLabel(appGear, "G1")
         ac.setPosition(lblGear, int(round(70 * scale_gear)), int(round(34 * scale_gear)))
         ac.setFontSize(lblGear, int(round(24 * scale_gear)))
         ac.setFontAlignment(lblGear, "center")
 
-        lblGForce = ac.addLabel(appGear, "0.00 / 0.00")
+        lblGForce = createBoldLabel(appGear, "0.00 / 0.00")
         ac.setPosition(lblGForce, int(round(70 * scale_gear)), int(round(75 * scale_gear)))
-        ac.setFontSize(lblGForce, int(round(9 * scale_gear)))
+        ac.setFontSize(lblGForce, int(round(24 * scale_gear)))
         ac.setFontAlignment(lblGForce, "center")
 
-        lblGearLabel = ac.addLabel(appGear, "G-Force / Gear")
+        lblGearLabel = createBoldLabel(appGear, "G-Force / Gear")
         ac.setPosition(lblGearLabel, int(round(70 * scale_gear)), int(round(105 * scale_gear)))
-        ac.setFontSize(lblGearLabel, int(round(8 * scale_gear)))
+        ac.setFontSize(lblGearLabel, int(round(24 * scale_gear)))
         ac.setFontAlignment(lblGearLabel, "center")
         ac.setFontColor(lblGearLabel, 0.4, 0.4, 0.4, 1.0)
 
@@ -685,19 +690,19 @@ def acMain(ac_version):
         ac.setPosition(imgPedalThrottle, int(round(12 * scale_pedals)), int(round(46 * scale_pedals)))
         ac.setSize(imgPedalThrottle, int(round(18 * scale_pedals)), int(round(18 * scale_pedals)))
 
-        lblPedalClutchVal = ac.addLabel(appPedals, "0%")
+        lblPedalClutchVal = createBoldLabel(appPedals, "0%")
         ac.setPosition(lblPedalClutchVal, int(round(154 * scale_pedals)), int(round(5 * scale_pedals)))
-        ac.setFontSize(lblPedalClutchVal, int(round(8 * scale_pedals)))
+        ac.setFontSize(lblPedalClutchVal, int(round(24 * scale_pedals)))
         ac.setFontAlignment(lblPedalClutchVal, "right")
 
-        lblPedalBrakeVal = ac.addLabel(appPedals, "0%")
+        lblPedalBrakeVal = createBoldLabel(appPedals, "0%")
         ac.setPosition(lblPedalBrakeVal, int(round(154 * scale_pedals)), int(round(23 * scale_pedals)))
-        ac.setFontSize(lblPedalBrakeVal, int(round(8 * scale_pedals)))
+        ac.setFontSize(lblPedalBrakeVal, int(round(24 * scale_pedals)))
         ac.setFontAlignment(lblPedalBrakeVal, "right")
 
-        lblPedalThrottleVal = ac.addLabel(appPedals, "0%")
+        lblPedalThrottleVal = createBoldLabel(appPedals, "0%")
         ac.setPosition(lblPedalThrottleVal, int(round(154 * scale_pedals)), int(round(41 * scale_pedals)))
-        ac.setFontSize(lblPedalThrottleVal, int(round(8 * scale_pedals)))
+        ac.setFontSize(lblPedalThrottleVal, int(round(24 * scale_pedals)))
         ac.setFontAlignment(lblPedalThrottleVal, "right")
 
         # ---------------------------------------------
@@ -731,23 +736,23 @@ def acMain(ac_version):
         ac.setIconPosition(appTimes, -10000, -10000)
         ac.addRenderCallback(appTimes, drawTimesGL)
 
-        lblTimesCurrent = ac.addLabel(appTimes, "--:--.-")
+        lblTimesCurrent = createBoldLabel(appTimes, "--:--.-")
         ac.setPosition(lblTimesCurrent, int(round(81 * scale_times)), int(round(22 * scale_times)))
-        ac.setFontSize(lblTimesCurrent, int(round(15 * scale_times)))
+        ac.setFontSize(lblTimesCurrent, int(round(24 * scale_times)))
         ac.setFontAlignment(lblTimesCurrent, "center")
 
-        lblTimesBest = ac.addLabel(appTimes, "Best: --:--.---")
+        lblTimesBest = createBoldLabel(appTimes, "Best: --:--.---")
         ac.setPosition(lblTimesBest, int(round(8 * scale_times)), int(round(5 * scale_times)))
-        ac.setFontSize(lblTimesBest, int(round(8 * scale_times)))
+        ac.setFontSize(lblTimesBest, int(round(24 * scale_times)))
 
-        lblTimesLast = ac.addLabel(appTimes, "Last: --:--.---")
+        lblTimesLast = createBoldLabel(appTimes, "Last: --:--.---")
         ac.setPosition(lblTimesLast, int(round(154 * scale_times)), int(round(5 * scale_times)))
-        ac.setFontSize(lblTimesLast, int(round(8 * scale_times)))
+        ac.setFontSize(lblTimesLast, int(round(24 * scale_times)))
         ac.setFontAlignment(lblTimesLast, "right")
 
-        lblTimesLaps = ac.addLabel(appTimes, "Lap 1")
+        lblTimesLaps = createBoldLabel(appTimes, "Lap 1")
         ac.setPosition(lblTimesLaps, int(round(81 * scale_times)), int(round(50 * scale_times)))
-        ac.setFontSize(lblTimesLaps, int(round(8 * scale_times)))
+        ac.setFontSize(lblTimesLaps, int(round(24 * scale_times)))
         ac.setFontAlignment(lblTimesLaps, "center")
 
         # ---------------------------------------------
@@ -760,23 +765,23 @@ def acMain(ac_version):
         ac.setIconPosition(appFuel, -10000, -10000)
         ac.addRenderCallback(appFuel, drawFuelGL)
 
-        lblFuelCurrent = ac.addLabel(appFuel, "0.0 L")
+        lblFuelCurrent = createBoldLabel(appFuel, "0.0 L")
         ac.setPosition(lblFuelCurrent, int(round(81 * scale_fuel)), int(round(22 * scale_fuel)))
-        ac.setFontSize(lblFuelCurrent, int(round(14 * scale_fuel)))
+        ac.setFontSize(lblFuelCurrent, int(round(24 * scale_fuel)))
         ac.setFontAlignment(lblFuelCurrent, "center")
 
-        lblFuelCons = ac.addLabel(appFuel, "Cons: -- L")
+        lblFuelCons = createBoldLabel(appFuel, "Cons: -- L")
         ac.setPosition(lblFuelCons, int(round(8 * scale_fuel)), int(round(5 * scale_fuel)))
-        ac.setFontSize(lblFuelCons, int(round(8 * scale_fuel)))
+        ac.setFontSize(lblFuelCons, int(round(24 * scale_fuel)))
 
-        lblFuelEst = ac.addLabel(appFuel, "Est: -- Laps")
+        lblFuelEst = createBoldLabel(appFuel, "Est: -- Laps")
         ac.setPosition(lblFuelEst, int(round(154 * scale_fuel)), int(round(5 * scale_fuel)))
-        ac.setFontSize(lblFuelEst, int(round(8 * scale_fuel)))
+        ac.setFontSize(lblFuelEst, int(round(24 * scale_fuel)))
         ac.setFontAlignment(lblFuelEst, "right")
 
-        lblFuelTemps = ac.addLabel(appFuel, "T: 0 C | A: 0 C")
+        lblFuelTemps = createBoldLabel(appFuel, "T: 0 C | A: 0 C")
         ac.setPosition(lblFuelTemps, int(round(81 * scale_fuel)), int(round(50 * scale_fuel)))
-        ac.setFontSize(lblFuelTemps, int(round(8 * scale_fuel)))
+        ac.setFontSize(lblFuelTemps, int(round(24 * scale_fuel)))
         ac.setFontAlignment(lblFuelTemps, "center")
 
         # ---------------------------------------------
@@ -793,18 +798,18 @@ def acMain(ac_version):
         ac.setPosition(imgPerf, int(round(12 * scale_perf)), int(round(23 * scale_perf)))
         ac.setSize(imgPerf, int(round(24 * scale_perf)), int(round(24 * scale_perf)))
 
-        lblPerfDelta = ac.addLabel(appPerf, "+0.00")
+        lblPerfDelta = createBoldLabel(appPerf, "+0.00")
         ac.setPosition(lblPerfDelta, int(round(102 * scale_perf)), int(round(22 * scale_perf)))
-        ac.setFontSize(lblPerfDelta, int(round(15 * scale_perf)))
+        ac.setFontSize(lblPerfDelta, int(round(24 * scale_perf)))
         ac.setFontAlignment(lblPerfDelta, "center")
 
-        lblPerfTurbo = ac.addLabel(appPerf, "Turbo: 0.0 bar")
+        lblPerfTurbo = createBoldLabel(appPerf, "Turbo: 0.0 bar")
         ac.setPosition(lblPerfTurbo, int(round(8 * scale_perf)), int(round(5 * scale_perf)))
-        ac.setFontSize(lblPerfTurbo, int(round(8 * scale_perf)))
+        ac.setFontSize(lblPerfTurbo, int(round(24 * scale_perf)))
 
-        lblPerfDRS = ac.addLabel(appPerf, "DRS: N/A")
+        lblPerfDRS = createBoldLabel(appPerf, "DRS: N/A")
         ac.setPosition(lblPerfDRS, int(round(154 * scale_perf)), int(round(5 * scale_perf)))
-        ac.setFontSize(lblPerfDRS, int(round(8 * scale_perf)))
+        ac.setFontSize(lblPerfDRS, int(round(24 * scale_perf)))
         ac.setFontAlignment(lblPerfDRS, "right")
 
         # ---------------------------------------------
@@ -821,18 +826,18 @@ def acMain(ac_version):
         ac.setPosition(imgDamage, int(round(12 * scale_damage)), int(round(23 * scale_damage)))
         ac.setSize(imgDamage, int(round(24 * scale_damage)), int(round(24 * scale_damage)))
 
-        lblDamageEngine = ac.addLabel(appDamage, "Eng: 100%")
+        lblDamageEngine = createBoldLabel(appDamage, "Eng: 100%")
         ac.setPosition(lblDamageEngine, int(round(102 * scale_damage)), int(round(22 * scale_damage)))
-        ac.setFontSize(lblDamageEngine, int(round(13 * scale_damage)))
+        ac.setFontSize(lblDamageEngine, int(round(24 * scale_damage)))
         ac.setFontAlignment(lblDamageEngine, "center")
 
-        lblDamageAero = ac.addLabel(appDamage, "Aero: 0%")
+        lblDamageAero = createBoldLabel(appDamage, "Aero: 0%")
         ac.setPosition(lblDamageAero, int(round(8 * scale_damage)), int(round(5 * scale_damage)))
-        ac.setFontSize(lblDamageAero, int(round(8 * scale_damage)))
+        ac.setFontSize(lblDamageAero, int(round(24 * scale_damage)))
 
-        lblDamageTrans = ac.addLabel(appDamage, "Gear: 100%")
+        lblDamageTrans = createBoldLabel(appDamage, "Gear: 100%")
         ac.setPosition(lblDamageTrans, int(round(154 * scale_damage)), int(round(5 * scale_damage)))
-        ac.setFontSize(lblDamageTrans, int(round(8 * scale_damage)))
+        ac.setFontSize(lblDamageTrans, int(round(24 * scale_damage)))
         ac.setFontAlignment(lblDamageTrans, "right")
 
         # ---------------------------------------------
@@ -849,14 +854,14 @@ def acMain(ac_version):
         ac.setPosition(imgTrack, int(round(12 * scale_track)), int(round(23 * scale_track)))
         ac.setSize(imgTrack, int(round(24 * scale_track)), int(round(24 * scale_track)))
 
-        lblTrackGrip = ac.addLabel(appTrack, "Grip: 100%")
+        lblTrackGrip = createBoldLabel(appTrack, "Grip: 100%")
         ac.setPosition(lblTrackGrip, int(round(102 * scale_track)), int(round(22 * scale_track)))
-        ac.setFontSize(lblTrackGrip, int(round(13 * scale_track)))
+        ac.setFontSize(lblTrackGrip, int(round(24 * scale_track)))
         ac.setFontAlignment(lblTrackGrip, "center")
 
-        lblTrackWind = ac.addLabel(appTrack, "Wind: 0 km/h")
+        lblTrackWind = createBoldLabel(appTrack, "Wind: 0 km/h")
         ac.setPosition(lblTrackWind, int(round(8 * scale_track)), int(round(5 * scale_track)))
-        ac.setFontSize(lblTrackWind, int(round(8 * scale_track)))
+        ac.setFontSize(lblTrackWind, int(round(24 * scale_track)))
 
         # ---------------------------------------------
         # 5g. APP: ERROR LOG & DEBUG (310px x 40px)
@@ -867,9 +872,9 @@ def acMain(ac_version):
         ac.drawBorder(appDebug, 0)
         ac.setIconPosition(appDebug, -10000, -10000)
 
-        lblDebugError = ac.addLabel(appDebug, "System Health: OK")
+        lblDebugError = createBoldLabel(appDebug, "System Health: OK")
         ac.setPosition(lblDebugError, int(round(10 * scale_debug)), int(round(12 * scale_debug)))
-        ac.setFontSize(lblDebugError, int(round(8 * scale_debug)))
+        ac.setFontSize(lblDebugError, int(round(24 * scale_debug)))
         ac.setFontColor(lblDebugError, 0.0, 1.0, 0.4, 1.0) # Toxic green for OK state
 
         # Apply starting backgrounds and opacities nativly
@@ -898,7 +903,7 @@ def acMain(ac_version):
 
         y = 30
         
-        # General Styles
+        # General Styles (Config labels can stay standard sized for interface clarity)
         lblOpacityName, sliderOpacity = addConfigRow("HUD Opacity", 10, 100, 10, opacity_pct, y); y += 35
         lblBgColorName, sliderBgColor = addConfigRow("BG Theme (0-3)", 0, 3, 1, bg_color_idx, y); y += 35
         lblTextColorName, sliderTextColor = addConfigRow("Text Theme (0-4)", 0, 4, 1, text_color_idx, y); y += 35
