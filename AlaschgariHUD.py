@@ -1,5 +1,5 @@
 # AlaschgariHUD for Assetto Corsa
-# Double-width Sidekick Replica HUD with full telemetry and CM Settings
+# Modular Sidekick Replica HUD - 5 separate floating apps
 
 import ac
 import acsys
@@ -18,7 +18,7 @@ os.environ['PATH'] = os.environ['PATH'] + ";."
 
 import traceback
 
-# UI Controls (Forward declared for log_error visibility)
+# Global Debug label
 lblDebugError = 0
 
 def log_error(msg):
@@ -52,23 +52,18 @@ try:
 except Exception as e:
     log_error("SimInfo import failed: " + traceback.format_exc())
 
-# App configuration (800px x 140px replica layout)
-appName = "AlaschgariHUD"
-width, height = 800, 140
-
-# Settings variables with defaults
-active_skin = "default"
+# Scale factor from configuration
 scale = 1.0
-show_rpm = True
-show_chassis = True
-show_tire_bars = True
 
-# UI Controls
-lblGear = 0
-lblGearBoxLabel = 0
-lblSpeed = 0
-lblSpeedBoxLabel = 0
-lblGForce = 0
+# 5 App Windows
+appShift = 0
+appTires = 0
+appSpeed = 0
+appPedals = 0
+appKers = 0
+
+# UI Controls per app window
+# Tires App
 lblPressFL = 0
 lblPressFR = 0
 lblPressRL = 0
@@ -76,10 +71,24 @@ lblPressRR = 0
 lblBrakeF = 0
 lblBrakeR = 0
 
-# Pedal label overlays
+# Speed App
+lblSpeed = 0
+lblSpeedLabel = 0
+lblGear = 0
+lblGearLabel = 0
+lblGForce = 0
+
+# Pedals App
+lblPedalClutch = 0
+lblPedalBrake = 0
+lblPedalThrottle = 0
 lblPedalClutchVal = 0
 lblPedalBrakeVal = 0
 lblPedalThrottleVal = 0
+
+# KERS & Wear App
+lblKersName = 0
+lblWearName = 0
 
 # Telemetry data cache
 gear = "G1"
@@ -101,7 +110,7 @@ def getConfigPath():
     return os.path.join(os.path.dirname(__file__), 'config.ini')
 
 def loadConfig():
-    global active_skin, scale, show_rpm, show_chassis, show_tire_bars
+    global scale
     path = getConfigPath()
     if os.path.exists(path):
         try:
@@ -111,164 +120,180 @@ def loadConfig():
                         k, v = line.split('=', 1)
                         k = k.strip().lower()
                         v = v.strip()
-                        if k == 'skin':
-                            active_skin = v.lower()
-                        elif k == 'scale':
+                        if k == 'scale':
                             try:
                                 scale = float(v) / 100.0
                                 if scale < 0.5: scale = 0.5
                                 if scale > 1.5: scale = 1.5
                             except:
                                 scale = 1.0
-                        elif k == 'show_rpm':
-                            show_rpm = (v.lower() == 'true')
-                        elif k == 'show_chassis':
-                            show_chassis = (v.lower() == 'true')
-                        elif k == 'show_tire_bars':
-                            show_tire_bars = (v.lower() == 'true')
         except Exception as e:
             log_error("loadConfig failed: " + str(e))
 
-def saveConfig():
-    try:
-        path = getConfigPath()
-        with open(path, 'w') as f:
-            f.write("[SETTINGS]\n")
-            f.write("skin = " + active_skin + "\n")
-            f.write("scale = " + str(int(scale * 100)) + "\n")
-            f.write("show_rpm = " + str(show_rpm) + "\n")
-            f.write("show_chassis = " + str(show_chassis) + "\n")
-            f.write("show_tire_bars = " + str(show_tire_bars) + "\n")
-    except Exception as e:
-        log_error("saveConfig failed: " + str(e))
-
-def applySkin():
-    global appWindow, lblGear, lblSpeed, scale
-    try:
-        ac.setBackgroundOpacity(appWindow, 0.6)
-        ac.setBackgroundColor(appWindow, 0.08, 0.09, 0.12)
-    except Exception as e:
-        log_error("applySkin failed: " + traceback.format_exc())
-
 def acMain(ac_version):
-    global appWindow, lblGear, lblSpeed, scale, lblDebugError
-    global lblPressFL, lblPressFR, lblPressRL, lblPressRR
-    global lblBrakeF, lblBrakeR, lblGForce, lblGearBoxLabel, lblSpeedBoxLabel
-    global lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
+    global scale, lblDebugError
+    global appShift, appTires, appSpeed, appPedals, appKers
+    global lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR
+    global lblSpeed, lblSpeedLabel, lblGear, lblGearLabel, lblGForce
+    global lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
+    global lblKersName, lblWearName
 
     try:
         loadConfig()
 
-        appWindow = ac.newApp(appName)
-        ac.setTitle(appWindow, "")
-        ac.setSize(appWindow, int(width * scale), int(height * scale))
-        ac.drawBorder(appWindow, 0)
-        ac.setIconPosition(appWindow, -10000, -10000)
+        # ---------------------------------------------
+        # 1. APP: SHIFT LIGHT BAR (480px x 20px)
+        # ---------------------------------------------
+        appShift = ac.newApp("AlaschgariHUD - Shift Lights")
+        ac.setSize(appShift, int(480 * scale), int(20 * scale))
+        ac.setTitle(appShift, "")
+        ac.drawBorder(appShift, 0)
+        ac.setBackgroundOpacity(appShift, 0.0)
+        ac.setIconPosition(appShift, -10000, -10000)
+        ac.addRenderCallback(appShift, drawShiftGL)
 
         # ---------------------------------------------
-        # LEFT PANEL: Tire & Brake Status (x=10 to x=320)
+        # 2. APP: TIRES & BRAKES STATUS (320px x 110px)
         # ---------------------------------------------
-        
-        # Temp/Pressure labels
-        lblPressFL = ac.addLabel(appWindow, "0\n0.0")
+        appTires = ac.newApp("AlaschgariHUD - Tires & Brakes")
+        ac.setSize(appTires, int(310 * scale), int(112 * scale))
+        ac.setTitle(appTires, "")
+        ac.drawBorder(appTires, 0)
+        ac.setBackgroundOpacity(appTires, 0.0)
+        ac.setIconPosition(appTires, -10000, -10000)
+        ac.addRenderCallback(appTires, drawTiresGL)
+
+        # Labels
+        lblPressFL = ac.addLabel(appTires, "0\n0.0")
         ac.setPosition(lblPressFL, int(15 * scale), int(22 * scale))
         ac.setFontSize(lblPressFL, int(11 * scale))
 
-        lblPressRL = ac.addLabel(appWindow, "0\n0.0")
+        lblPressRL = ac.addLabel(appTires, "0\n0.0")
         ac.setPosition(lblPressRL, int(15 * scale), int(72 * scale))
         ac.setFontSize(lblPressRL, int(11 * scale))
 
-        lblPressFR = ac.addLabel(appWindow, "0\n0.0")
+        lblPressFR = ac.addLabel(appTires, "0\n0.0")
         ac.setPosition(lblPressFR, int(212 * scale), int(22 * scale))
         ac.setFontSize(lblPressFR, int(11 * scale))
         ac.setFontAlignment(lblPressFR, "right")
 
-        lblPressRR = ac.addLabel(appWindow, "0\n0.0")
+        lblPressRR = ac.addLabel(appTires, "0\n0.0")
         ac.setPosition(lblPressRR, int(212 * scale), int(72 * scale))
         ac.setFontSize(lblPressRR, int(11 * scale))
         ac.setFontAlignment(lblPressRR, "right")
 
-        # Brakes (Front and Rear labels)
-        lblBrakeF = ac.addLabel(appWindow, "0")
+        lblBrakeF = ac.addLabel(appTires, "0")
         ac.setPosition(lblBrakeF, int(265 * scale), int(22 * scale))
         ac.setFontSize(lblBrakeF, int(13 * scale))
         ac.setFontColor(lblBrakeF, 1.0, 0.2, 0.2, 1.0)
 
-        lblBrakeR = ac.addLabel(appWindow, "0")
+        lblBrakeR = ac.addLabel(appTires, "0")
         ac.setPosition(lblBrakeR, int(265 * scale), int(72 * scale))
         ac.setFontSize(lblBrakeR, int(13 * scale))
         ac.setFontColor(lblBrakeR, 1.0, 0.2, 0.2, 1.0)
 
         # ---------------------------------------------
-        # CENTER PANEL: Speedometer & Gear Box (x=340 to x=610)
+        # 3. APP: SPEEDOMETER & GEAR (290px x 112px)
         # ---------------------------------------------
+        appSpeed = ac.newApp("AlaschgariHUD - Speed & Gear")
+        ac.setSize(appSpeed, int(290 * scale), int(112 * scale))
+        ac.setTitle(appSpeed, "")
+        ac.drawBorder(appSpeed, 0)
+        ac.setBackgroundOpacity(appSpeed, 0.0)
+        ac.setIconPosition(appSpeed, -10000, -10000)
+        ac.addRenderCallback(appSpeed, drawSpeedGL)
 
-        # Speedometer Box Label (SPEEDOMETER)
-        lblSpeedBoxLabel = ac.addLabel(appWindow, "Speedometer")
-        ac.setPosition(lblSpeedBoxLabel, int(412 * scale), int(105 * scale))
-        ac.setFontSize(lblSpeedBoxLabel, int(8 * scale))
-        ac.setFontAlignment(lblSpeedBoxLabel, "center")
-        ac.setFontColor(lblSpeedBoxLabel, 0.4, 0.4, 0.4, 1.0)
-
-        # Speed Value Text
-        lblSpeed = ac.addLabel(appWindow, "0 KM/H")
-        ac.setPosition(lblSpeed, int(412 * scale), int(42 * scale))
+        lblSpeed = ac.addLabel(appSpeed, "0 KM/H")
+        ac.setPosition(lblSpeed, int(70 * scale), int(42 * scale))
         ac.setFontSize(lblSpeed, int(28 * scale))
         ac.setFontAlignment(lblSpeed, "center")
-        ac.setFontColor(lblSpeed, 0.0, 0.94, 1.0, 1.0) # Neon cyan
+        ac.setFontColor(lblSpeed, 0.0, 0.94, 1.0, 1.0)
 
-        # Gear/G-Force Box Label (G-FORCE VECTOR)
-        lblGearBoxLabel = ac.addLabel(appWindow, "G-Force / Gear")
-        ac.setPosition(lblGearBoxLabel, int(547 * scale), int(105 * scale))
-        ac.setFontSize(lblGearBoxLabel, int(8 * scale))
-        ac.setFontAlignment(lblGearBoxLabel, "center")
-        ac.setFontColor(lblGearBoxLabel, 0.4, 0.4, 0.4, 1.0)
+        lblSpeedLabel = ac.addLabel(appSpeed, "Speedometer")
+        ac.setPosition(lblSpeedLabel, int(70 * scale), int(105 * scale))
+        ac.setFontSize(lblSpeedLabel, int(8 * scale))
+        ac.setFontAlignment(lblSpeedLabel, "center")
+        ac.setFontColor(lblSpeedLabel, 0.4, 0.4, 0.4, 1.0)
 
-        # Gear value (G5 style)
-        lblGear = ac.addLabel(appWindow, "G1")
-        ac.setPosition(lblGear, int(547 * scale), int(34 * scale))
+        lblGear = ac.addLabel(appSpeed, "G1")
+        ac.setPosition(lblGear, int(215 * scale), int(34 * scale))
         ac.setFontSize(lblGear, int(24 * scale))
         ac.setFontAlignment(lblGear, "center")
 
-        # G-Force values
-        lblGForce = ac.addLabel(appWindow, "0.00 / 0.00")
-        ac.setPosition(lblGForce, int(547 * scale), int(75 * scale))
+        lblGForce = ac.addLabel(appSpeed, "0.00 / 0.00")
+        ac.setPosition(lblGForce, int(215 * scale), int(75 * scale))
         ac.setFontSize(lblGForce, int(9 * scale))
         ac.setFontAlignment(lblGForce, "center")
         ac.setFontColor(lblGForce, 0.0, 0.94, 1.0, 1.0)
 
-        # ---------------------------------------------
-        # RIGHT PANEL: Pedals, KERS & Wear (x=630 to x=790)
-        # ---------------------------------------------
+        lblGearLabel = ac.addLabel(appSpeed, "G-Force / Gear")
+        ac.setPosition(lblGearLabel, int(215 * scale), int(105 * scale))
+        ac.setFontSize(lblGearLabel, int(8 * scale))
+        ac.setFontAlignment(lblGearLabel, "center")
+        ac.setFontColor(lblGearLabel, 0.4, 0.4, 0.4, 1.0)
 
-        # Pedal value labels
-        lblPedalClutchVal = ac.addLabel(appWindow, "0%")
-        ac.setPosition(lblPedalClutchVal, int(755 * scale), int(20 * scale))
+        # ---------------------------------------------
+        # 4. APP: PEDAL INPUTS (162px x 70px)
+        # ---------------------------------------------
+        appPedals = ac.newApp("AlaschgariHUD - Pedals")
+        ac.setSize(appPedals, int(162 * scale), int(70 * scale))
+        ac.setTitle(appPedals, "")
+        ac.drawBorder(appPedals, 0)
+        ac.setBackgroundOpacity(appPedals, 0.0)
+        ac.setIconPosition(appPedals, -10000, -10000)
+        ac.addRenderCallback(appPedals, drawPedalsGL)
+
+        lblPedalClutch = ac.addLabel(appPedals, "Clutch")
+        ac.setPosition(lblPedalClutch, int(8 * scale), int(5 * scale))
+        ac.setFontSize(lblPedalClutch, int(8 * scale))
+
+        lblPedalBrake = ac.addLabel(appPedals, "Brake")
+        ac.setPosition(lblPedalBrake, int(8 * scale), int(23 * scale))
+        ac.setFontSize(lblPedalBrake, int(8 * scale))
+
+        lblPedalThrottle = ac.addLabel(appPedals, "Throt")
+        ac.setPosition(lblPedalThrottle, int(8 * scale), int(41 * scale))
+        ac.setFontSize(lblPedalThrottle, int(8 * scale))
+
+        lblPedalClutchVal = ac.addLabel(appPedals, "0%")
+        ac.setPosition(lblPedalClutchVal, int(154 * scale), int(5 * scale))
         ac.setFontSize(lblPedalClutchVal, int(8 * scale))
         ac.setFontAlignment(lblPedalClutchVal, "right")
 
-        lblPedalBrakeVal = ac.addLabel(appWindow, "0%")
-        ac.setPosition(lblPedalBrakeVal, int(755 * scale), int(38 * scale))
+        lblPedalBrakeVal = ac.addLabel(appPedals, "0%")
+        ac.setPosition(lblPedalBrakeVal, int(154 * scale), int(23 * scale))
         ac.setFontSize(lblPedalBrakeVal, int(8 * scale))
         ac.setFontAlignment(lblPedalBrakeVal, "right")
 
-        lblPedalThrottleVal = ac.addLabel(appWindow, "0%")
-        ac.setPosition(lblPedalThrottleVal, int(755 * scale), int(56 * scale))
+        lblPedalThrottleVal = ac.addLabel(appPedals, "0%")
+        ac.setPosition(lblPedalThrottleVal, int(154 * scale), int(41 * scale))
         ac.setFontSize(lblPedalThrottleVal, int(8 * scale))
         ac.setFontAlignment(lblPedalThrottleVal, "right")
 
         # ---------------------------------------------
-        # GLOBAL SYSTEM: Debug & Rendering
+        # 5. APP: KERS & TIRE WEAR (162px x 45px)
         # ---------------------------------------------
+        appKers = ac.newApp("AlaschgariHUD - KERS & Wear")
+        ac.setSize(appKers, int(162 * scale), int(45 * scale))
+        ac.setTitle(appKers, "")
+        ac.drawBorder(appKers, 0)
+        ac.setBackgroundOpacity(appKers, 0.0)
+        ac.setIconPosition(appKers, -10000, -10000)
+        ac.addRenderCallback(appKers, drawKersGL)
 
-        lblDebugError = ac.addLabel(appWindow, "")
-        ac.setPosition(lblDebugError, int(15 * scale), int(115 * scale))
+        lblKersName = ac.addLabel(appKers, "KERS")
+        ac.setPosition(lblKersName, int(12 * scale), int(16 * scale))
+        ac.setFontSize(lblKersName, int(9 * scale))
+
+        lblWearName = ac.addLabel(appKers, "WEAR")
+        ac.setPosition(lblWearName, int(90 * scale), int(16 * scale))
+        ac.setFontSize(lblWearName, int(9 * scale))
+
+        # Setup main debug label in tires app window as anchor
+        lblDebugError = ac.addLabel(appTires, "")
+        ac.setPosition(lblDebugError, int(10 * scale), int(115 * scale))
         ac.setFontSize(lblDebugError, int(8 * scale))
         ac.setFontColor(lblDebugError, 1.0, 0.2, 0.2, 1.0)
-
-        applySkin()
-
-        ac.addRenderCallback(appWindow, appGL)
 
         # Max RPM default check from shared memory
         if simInfo is not None:
@@ -283,223 +308,198 @@ def acMain(ac_version):
 
 def getTireColor(temp):
     if temp < 70.0:
-        return [0.1, 0.4, 0.8, 0.9] # Cold
+        return [0.1, 0.4, 0.8, 0.9] # Cold blue
     elif temp > 95.0:
-        return [1.0, 0.0, 0.62, 0.9] # Hot
+        return [1.0, 0.2, 0.2, 0.9] # Hot red
     else:
         return [0.0, 1.0, 0.4, 0.9] # Optimal green
 
-def appGL(deltaT):
-    global rpms, maxRpm, speed, tireTemps, scale, show_rpm, show_chassis, show_tire_bars
-    global clutchInput, brakeInput, throttleInput, kersCharge, tyreWear, brakeTemps
+# -------------------------------------------------------------
+# INDIVIDUAL OPENGL RENDER CALLBACKS FOR FLOATING WINDOWS
+# -------------------------------------------------------------
+
+def drawShiftGL(deltaT):
+    global rpms, maxRpm, scale, show_rpm
+    if not show_rpm or maxRpm <= 0:
+        return
 
     try:
-        # 1. DRAW SUB-BACKGROUND PANELS (Boxes)
-        # Left Panel (Chassis & Tires)
-        ac.glColor4f(0.13, 0.15, 0.19, 0.4)
-        ac.glQuad(int(10 * scale), int(18 * scale), int(310 * scale), int(112 * scale))
+        pct = float(rpms) / float(maxRpm)
+        if pct > 1.0: pct = 1.0
 
-        # Center Sub Box 1: Speedometer
-        ac.glQuad(int(330 * scale), int(18 * scale), int(140 * scale), int(112 * scale))
+        total_segments = 24
+        segment_gap = 2
+        bar_w = 480 * scale
+        segment_width = (bar_w - (segment_gap * scale * (total_segments - 1))) / total_segments
+        active_segments = int(round(pct * total_segments))
 
-        # Center Sub Box 2: Gear & G-Force
-        ac.glQuad(int(478 * scale), int(18 * scale), int(140 * scale), int(112 * scale))
+        is_flashing = (pct >= 0.92) and (int(rpms * 0.1) % 2 == 0)
 
-        # Right Panel (Pedals & Wear)
-        ac.glQuad(int(628 * scale), int(18 * scale), int(162 * scale), int(112 * scale))
+        for i in range(total_segments):
+            x = i * (segment_width + (segment_gap * scale))
+            col = [0.15, 0.15, 0.15, 0.8]
 
-        # ---------------------------------------------
-        # LEFT PANEL: Chassis Axles & Outline
-        # ---------------------------------------------
+            if is_flashing:
+                col = [1.0, 0.2, 0.2, 1.0] if (int(rpms * 0.1) % 2 == 0) else [0.0, 0.94, 1.0, 1.0]
+            elif i < active_segments:
+                if i < total_segments * 0.6:
+                    col = [0.0, 1.0, 0.4, 0.9]
+                elif i < total_segments * 0.85:
+                    col = [1.0, 1.0, 0.0, 0.9]
+                else:
+                    col = [1.0, 0.2, 0.2, 0.9]
+
+            ac.glColor4f(col[0], col[1], col[2], col[3])
+            ac.glQuad(int(x), 0, int(segment_width), int(12 * scale))
+    except Exception as e:
+        log_error("drawShiftGL failed:\n" + traceback.format_exc())
+
+def drawTiresGL(deltaT):
+    global tireTemps, scale, show_chassis, show_tire_bars, brakeTemps
+    try:
+        # Panel Background
+        ac.glColor4f(0.08, 0.09, 0.12, 0.65)
+        ac.glQuad(0, 0, int(310 * scale), int(112 * scale))
+
+        # Chassis
         if show_chassis:
-            ac.glColor4f(1.0, 1.0, 1.0, 0.15)
-            # Outline Cabin
-            ac.glQuad(int(110 * scale), int(28 * scale), int(60 * scale), int(90 * scale))
+            ac.glColor4f(1.0, 1.0, 1.0, 0.12)
+            # Outline
+            ac.glQuad(int(110 * scale), int(10 * scale), int(60 * scale), int(90 * scale))
             # Axles
-            ac.glQuad(int(95 * scale), int(48 * scale), int(90 * scale), int(1.5 * scale))
-            ac.glQuad(int(95 * scale), int(98 * scale), int(90 * scale), int(1.5 * scale))
+            ac.glQuad(int(95 * scale), int(30 * scale), int(90 * scale), int(1.5 * scale))
+            ac.glQuad(int(95 * scale), int(80 * scale), int(90 * scale), int(1.5 * scale))
 
-        # Draw Tires (FL: x=80, y=28; FR: x=168, y=28)
-        # Front Left
+        # Tires (FL, FR, RL, RR)
+        # FL
         col = getTireColor(tireTemps[0])
         ac.glColor4f(col[0], col[1], col[2], col[3])
-        ac.glQuad(int(80 * scale), int(28 * scale), int(14 * scale), int(26 * scale))
+        ac.glQuad(int(80 * scale), int(10 * scale), int(14 * scale), int(26 * scale))
 
-        # Front Right
+        # FR
         col = getTireColor(tireTemps[1])
         ac.glColor4f(col[0], col[1], col[2], col[3])
-        ac.glQuad(int(168 * scale), int(28 * scale), int(14 * scale), int(26 * scale))
+        ac.glQuad(int(168 * scale), int(10 * scale), int(14 * scale), int(26 * scale))
 
-        # Rear Left
+        # RL
         col = getTireColor(tireTemps[2])
         ac.glColor4f(col[0], col[1], col[2], col[3])
-        ac.glQuad(int(80 * scale), int(78 * scale), int(14 * scale), int(26 * scale))
+        ac.glQuad(int(80 * scale), int(60 * scale), int(14 * scale), int(26 * scale))
 
-        # Rear Right
+        # RR
         col = getTireColor(tireTemps[3])
         ac.glColor4f(col[0], col[1], col[2], col[3])
-        ac.glQuad(int(168 * scale), int(78 * scale), int(14 * scale), int(26 * scale))
+        ac.glQuad(int(168 * scale), int(60 * scale), int(14 * scale), int(26 * scale))
 
-        # Tire Bars
         if show_tire_bars:
             # FL Bar
             ac.glColor4f(0.05, 0.05, 0.05, 0.9)
-            ac.glQuad(int(80 * scale), int(57 * scale), int(20 * scale), int(4 * scale))
+            ac.glQuad(int(80 * scale), int(39 * scale), int(20 * scale), int(4 * scale))
             col = getTireColor(tireTemps[0])
             ac.glColor4f(col[0], col[1], col[2], col[3])
             pct = max(0.0, min(1.0, (tireTemps[0] - 40.0) / 80.0))
-            ac.glQuad(int(80 * scale), int(57 * scale), int(20 * pct * scale), int(4 * scale))
+            ac.glQuad(int(80 * scale), int(39 * scale), int(20 * pct * scale), int(4 * scale))
 
             # FR Bar
             ac.glColor4f(0.05, 0.05, 0.05, 0.9)
-            ac.glQuad(int(168 * scale), int(57 * scale), int(20 * scale), int(4 * scale))
+            ac.glQuad(int(168 * scale), int(39 * scale), int(20 * scale), int(4 * scale))
             col = getTireColor(tireTemps[1])
             ac.glColor4f(col[0], col[1], col[2], col[3])
             pct = max(0.0, min(1.0, (tireTemps[1] - 40.0) / 80.0))
-            ac.glQuad(int(168 * scale), int(57 * scale), int(20 * pct * scale), int(4 * scale))
+            ac.glQuad(int(168 * scale), int(39 * scale), int(20 * pct * scale), int(4 * scale))
 
             # RL Bar
             ac.glColor4f(0.05, 0.05, 0.05, 0.9)
-            ac.glQuad(int(80 * scale), int(107 * scale), int(20 * scale), int(4 * scale))
+            ac.glQuad(int(80 * scale), int(89 * scale), int(20 * scale), int(4 * scale))
             col = getTireColor(tireTemps[2])
             ac.glColor4f(col[0], col[1], col[2], col[3])
             pct = max(0.0, min(1.0, (tireTemps[2] - 40.0) / 80.0))
-            ac.glQuad(int(80 * scale), int(107 * scale), int(20 * pct * scale), int(4 * scale))
+            ac.glQuad(int(80 * scale), int(89 * scale), int(20 * pct * scale), int(4 * scale))
 
             # RR Bar
             ac.glColor4f(0.05, 0.05, 0.05, 0.9)
-            ac.glQuad(int(168 * scale), int(107 * scale), int(20 * scale), int(4 * scale))
+            ac.glQuad(int(168 * scale), int(89 * scale), int(20 * scale), int(4 * scale))
             col = getTireColor(tireTemps[3])
             ac.glColor4f(col[0], col[1], col[2], col[3])
             pct = max(0.0, min(1.0, (tireTemps[3] - 40.0) / 80.0))
-            ac.glQuad(int(168 * scale), int(107 * scale), int(20 * pct * scale), int(4 * scale))
+            ac.glQuad(int(168 * scale), int(89 * scale), int(20 * pct * scale), int(4 * scale))
 
-        # Brake Bars (Red line indicator under brake temps)
+        # Brake Indicator Bars
         ac.glColor4f(1.0, 0.2, 0.2, 0.8)
-        # Front Brake
         bf_pct = max(0.0, min(1.0, brakeTemps[0] / 800.0))
-        ac.glQuad(int(265 * scale), int(38 * scale), int(30 * bf_pct * scale), int(5 * scale))
-        # Rear Brake
+        ac.glQuad(int(265 * scale), int(20 * scale), int(30 * bf_pct * scale), int(5 * scale))
         br_pct = max(0.0, min(1.0, brakeTemps[2] / 800.0))
-        ac.glQuad(int(265 * scale), int(88 * scale), int(30 * br_pct * scale), int(5 * scale))
-
-        # ---------------------------------------------
-        # RIGHT PANEL: Pedals (Clutch, Brake, Throttle)
-        # ---------------------------------------------
-        # Names labels Clutch(x=635,y=20), Brake(y=38), Throttle(y=56)
-        ac.glColor4f(1.0, 1.0, 1.0, 0.1) # Bar Backgrounds
-        ac.glQuad(int(675 * scale), int(23 * scale), int(50 * scale), int(8 * scale))
-        ac.glQuad(int(675 * scale), int(41 * scale), int(50 * scale), int(8 * scale))
-        ac.glQuad(int(675 * scale), int(59 * scale), int(50 * scale), int(8 * scale))
-
-        # Fill: Clutch (Blue)
-        ac.glColor4f(0.0, 0.5, 1.0, 0.9)
-        ac.glQuad(int(675 * scale), int(23 * scale), int(50 * clutchInput * scale), int(8 * scale))
-
-        # Fill: Brake (Red)
-        ac.glColor4f(1.0, 0.2, 0.2, 0.9)
-        ac.glQuad(int(675 * scale), int(41 * scale), int(50 * brakeInput * scale), int(8 * scale))
-
-        # Fill: Throttle (Green)
-        ac.glColor4f(0.0, 1.0, 0.4, 0.9)
-        ac.glQuad(int(675 * scale), int(59 * scale), int(50 * throttleInput * scale), int(8 * scale))
-
-        # Names of Pedals
-        # (Drawn using simple acLabels: Clutch, Brake, Throttle)
-        # Note: We draw vertical KERS & WEAR bars below (y=75 to y=120)
-        # Vertical Bar 1: KERS (x=635)
-        ac.glColor4f(0.05, 0.05, 0.05, 0.9)
-        ac.glQuad(int(635 * scale), int(78 * scale), int(72 * scale), int(45 * scale)) # box background
-        ac.glQuad(int(695 * scale), int(82 * scale), int(8 * scale), int(37 * scale)) # inner bar background
-        ac.glColor4f(0.0, 0.94, 1.0, 0.9) # Cyan KERS Fill
-        ac.glQuad(int(695 * scale), int(82 * scale + (37 * (1.0 - kersCharge)) * scale), int(8 * scale), int(37 * kersCharge * scale))
-
-        # Vertical Bar 2: WEAR (x=712)
-        ac.glColor4f(0.05, 0.05, 0.05, 0.9)
-        ac.glQuad(int(712 * scale), int(78 * scale), int(72 * scale), int(45 * scale))
-        ac.glQuad(int(768 * scale), int(82 * scale), int(8 * scale), int(37 * scale))
-        ac.glColor4f(0.6, 0.6, 0.6, 0.9) # Grey Wear Fill (Note: Wear scales from 0 to 100%, we display remaining tire health)
-        wear_left = max(0.0, min(1.0, 1.0 - tyreWear))
-        ac.glQuad(int(768 * scale), int(82 * scale + (37 * (1.0 - wear_left)) * scale), int(8 * scale), int(37 * wear_left * scale))
-
-        # ---------------------------------------------
-        # SHIFT LIGHT BAR (Ganz oben, zentriert)
-        # ---------------------------------------------
-        if show_rpm and maxRpm > 0:
-            pct = float(rpms) / float(maxRpm)
-            if pct > 1.0:
-                pct = 1.0
-
-            total_segments = 24
-            segment_gap = 2
-            bar_w = 480 * scale
-            segment_width = (bar_w - (segment_gap * scale * (total_segments - 1))) / total_segments
-            active_segments = int(round(pct * total_segments))
-
-            is_flashing = (pct >= 0.92) and (int(rpms * 0.1) % 2 == 0)
-
-            # Center align bar
-            start_x = (width * scale - bar_w) / 2.0
-
-            for i in range(total_segments):
-                x = start_x + (i * (segment_width + (segment_gap * scale)))
-                
-                # Default segment color: Background dark
-                col = [0.15, 0.15, 0.15, 0.8]
-
-                if is_flashing:
-                    col = [1.0, 0.2, 0.2, 1.0] if (int(rpms * 0.1) % 2 == 0) else [0.0, 0.94, 1.0, 1.0]
-                elif i < active_segments:
-                    if i < total_segments * 0.6:
-                        col = [0.0, 1.0, 0.4, 0.9] # Green
-                    elif i < total_segments * 0.85:
-                        col = [1.0, 1.0, 0.0, 0.9] # Yellow
-                    else:
-                        col = [1.0, 0.2, 0.2, 0.9] # Red
-
-                ac.glColor4f(col[0], col[1], col[2], col[3])
-                ac.glQuad(int(x), int(2 * scale), int(segment_width), int(12 * scale))
+        ac.glQuad(int(265 * scale), int(70 * scale), int(30 * br_pct * scale), int(5 * scale))
     except Exception as e:
-        log_error("appGL crash:\n" + traceback.format_exc())
+        log_error("drawTiresGL failed:\n" + traceback.format_exc())
 
-# Text label overlays for Pedal panel
-lblPedalClutch = 0
-lblPedalBrake = 0
-lblPedalThrottle = 0
-lblKersName = 0
-lblWearName = 0
+def drawSpeedGL(deltaT):
+    global scale
+    try:
+        # Background Boxes
+        ac.glColor4f(0.08, 0.09, 0.12, 0.65)
+        # Speedometer Box (width 140)
+        ac.glQuad(0, 0, int(140 * scale), int(112 * scale))
+        # Gear / G-Force Box (width 140, offset 150)
+        ac.glQuad(int(150 * scale), 0, int(140 * scale), int(112 * scale))
+    except Exception as e:
+        log_error("drawSpeedGL failed:\n" + traceback.format_exc())
+
+def drawPedalsGL(deltaT):
+    global scale, clutchInput, brakeInput, throttleInput
+    try:
+        # Background Box
+        ac.glColor4f(0.08, 0.09, 0.12, 0.65)
+        ac.glQuad(0, 0, int(162 * scale), int(70 * scale))
+
+        # Fills backgrounds
+        ac.glColor4f(0.05, 0.05, 0.05, 0.9)
+        ac.glQuad(int(50 * scale), int(7 * scale), int(65 * scale), int(8 * scale))
+        ac.glQuad(int(50 * scale), int(25 * scale), int(65 * scale), int(8 * scale))
+        ac.glQuad(int(50 * scale), int(43 * scale), int(65 * scale), int(8 * scale))
+
+        # Fill: Clutch
+        ac.glColor4f(0.0, 0.5, 1.0, 0.9)
+        ac.glQuad(int(50 * scale), int(7 * scale), int(65 * clutchInput * scale), int(8 * scale))
+
+        # Fill: Brake
+        ac.glColor4f(1.0, 0.2, 0.2, 0.9)
+        ac.glQuad(int(50 * scale), int(25 * scale), int(65 * brakeInput * scale), int(8 * scale))
+
+        # Fill: Throttle
+        ac.glColor4f(0.0, 1.0, 0.4, 0.9)
+        ac.glQuad(int(50 * scale), int(43 * scale), int(65 * throttleInput * scale), int(8 * scale))
+    except Exception as e:
+        log_error("drawPedalsGL failed:\n" + traceback.format_exc())
+
+def drawKersGL(deltaT):
+    global scale, kersCharge, tyreWear
+    try:
+        # Background Boxes
+        ac.glColor4f(0.08, 0.09, 0.12, 0.65)
+        ac.glQuad(0, 0, int(76 * scale), int(45 * scale))
+        ac.glQuad(int(86 * scale), 0, int(76 * scale), int(45 * scale))
+
+        # Kers Inner Bar
+        ac.glColor4f(0.05, 0.05, 0.05, 0.9)
+        ac.glQuad(int(56 * scale), int(4 * scale), int(8 * scale), int(37 * scale))
+        ac.glColor4f(0.0, 0.94, 1.0, 0.9)
+        ac.glQuad(int(56 * scale), int(4 * scale + (37 * (1.0 - kersCharge)) * scale), int(8 * scale), int(37 * kersCharge * scale))
+
+        # Wear Inner Bar
+        ac.glColor4f(0.05, 0.05, 0.05, 0.9)
+        ac.glQuad(int(142 * scale), int(4 * scale), int(8 * scale), int(37 * scale))
+        ac.glColor4f(0.6, 0.6, 0.6, 0.9)
+        wear_left = max(0.0, min(1.0, 1.0 - tyreWear))
+        ac.glQuad(int(142 * scale), int(4 * scale + (37 * (1.0 - wear_left)) * scale), int(8 * scale), int(37 * wear_left * scale))
+    except Exception as e:
+        log_error("drawKersGL failed:\n" + traceback.format_exc())
 
 def acUpdate(deltaT):
     global gear, speed, rpms, fuel, tireTemps, tirePressures, maxRpm, scale
     global lblGear, lblSpeed, lblPressFL, lblPressFR, lblPressRL, lblPressRR, lblBrakeF, lblBrakeR, lblGForce
     global clutchInput, brakeInput, throttleInput, kersCharge, tyreWear, brakeTemps, gForceLat, gForceLon
     global lblPedalClutchVal, lblPedalBrakeVal, lblPedalThrottleVal
-    global lblPedalClutch, lblPedalBrake, lblPedalThrottle, lblKersName, lblWearName
-
-    # Generate pedal text labels once in update if not present
-    try:
-        if lblPedalClutch == 0:
-            lblPedalClutch = ac.addLabel(appWindow, "Clutch")
-            ac.setPosition(lblPedalClutch, int(635 * scale), int(20 * scale))
-            ac.setFontSize(lblPedalClutch, int(8 * scale))
-
-            lblPedalBrake = ac.addLabel(appWindow, "Brake")
-            ac.setPosition(lblPedalBrake, int(635 * scale), int(38 * scale))
-            ac.setFontSize(lblPedalBrake, int(8 * scale))
-
-            lblPedalThrottle = ac.addLabel(appWindow, "Throt")
-            ac.setPosition(lblPedalThrottle, int(635 * scale), int(56 * scale))
-            ac.setFontSize(lblPedalThrottle, int(8 * scale))
-
-            lblKersName = ac.addLabel(appWindow, "KERS")
-            ac.setPosition(lblKersName, int(642 * scale), int(92 * scale))
-            ac.setFontSize(lblKersName, int(9 * scale))
-
-            lblWearName = ac.addLabel(appWindow, "WEAR")
-            ac.setPosition(lblWearName, int(720 * scale), int(92 * scale))
-            ac.setFontSize(lblWearName, int(9 * scale))
-    except:
-        pass
 
     # 1. Update Gear
     try:
@@ -531,7 +531,6 @@ def acUpdate(deltaT):
         ac.setText(lblPedalBrakeVal, "{0:.0f}%".format(brakeInput * 100.0))
         ac.setText(lblPedalThrottleVal, "{0:.0f}%".format(throttleInput * 100.0))
 
-        # G-Forces
         g_vec = ac.getCarState(0, acsys.CS.AccG)
         if isinstance(g_vec, list) or isinstance(g_vec, tuple):
             gForceLat = g_vec[0]
@@ -542,7 +541,7 @@ def acUpdate(deltaT):
 
     # 4. Update Shared Memory (SM) values
     if simInfo is not None:
-        # RPM & MaxRPM
+        # RPM
         try:
             rpms = simInfo.physics.rpms
             maxRpm = simInfo.static.maxRpm
@@ -552,7 +551,6 @@ def acUpdate(deltaT):
         # KERS & Wear
         try:
             kersCharge = simInfo.physics.ersDelivery
-            # Average tire wear from the 4 wheels
             wear_sum = 0.0
             for i in range(4):
                 wear_sum += simInfo.physics.tyreWear[i]
@@ -560,14 +558,12 @@ def acUpdate(deltaT):
         except Exception as e:
             log_error("Kers/Wear SM update failed:\n" + traceback.format_exc())
 
-        # Tires (Temps and Pressures)
+        # Tires (Temps & Pressure Deltas from Ideal 28.0 PSI)
         try:
             for i in range(4):
                 tireTemps[i] = simInfo.physics.tyreCoreTemperature[i]
                 tirePressures[i] = simInfo.physics.wheelsPressure[i]
             
-            # Formatted exactly: Temp (top), Pressure delta (bottom)
-            # Pressure delta compared to ideal 28.0 PSI
             ac.setText(lblPressFL, "{0:.0f}\n{1:+.1f}".format(tireTemps[0], tirePressures[0] - 28.0))
             ac.setText(lblPressFR, "{0:.0f}\n{1:+.1f}".format(tireTemps[1], tirePressures[1] - 28.0))
             ac.setText(lblPressRL, "{0:.0f}\n{1:+.1f}".format(tireTemps[2], tirePressures[2] - 28.0))
